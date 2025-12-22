@@ -40,9 +40,12 @@ export const useTodos = () => {
     try {
       const db = await getDB();
       const dueDateStr = dueDate ? format(dueDate, 'yyyy-MM-dd') : null;
+      // Store local time for created_at to avoid timezone shifts
+      const createdAt = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
+      
       await db.execute(
         'INSERT INTO todos (title, due_date, completed, created_at) VALUES (?, ?, 0, ?)',
-        [title, dueDateStr, new Date().toISOString()]
+        [title, dueDateStr, createdAt]
       );
       await fetchTodos();
     } catch (error) {

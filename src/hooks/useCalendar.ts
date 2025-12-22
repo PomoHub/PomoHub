@@ -4,9 +4,9 @@ import { startOfMonth, endOfMonth, format } from 'date-fns';
 
 export interface DayStats {
   date: string;
-  completedTodos: number;
-  completedHabits: number;
   pomodoroMinutes: number;
+  completedHabits: number;
+  completedTodos: number;
 }
 
 export const useCalendar = () => {
@@ -14,7 +14,7 @@ export const useCalendar = () => {
   const [stats, setStats] = useState<Record<string, DayStats>>({});
   const [loading, setLoading] = useState(true);
 
-  const fetchMonthStats = useCallback(async () => {
+  const fetchStats = useCallback(async () => {
     try {
       setLoading(true);
       const db = await getDB();
@@ -40,6 +40,7 @@ export const useCalendar = () => {
       );
 
       // Fetch Pomodoro Sessions sum per day
+      // Using date(completed_at) which works for both 'YYYY-MM-DDTHH:mm:ss' (ISO) and 'YYYY-MM-DD HH:mm:ss' (Local)
       const pomodoroSessions = await db.select<{ date: string; minutes: number }[]>(
         `SELECT date(completed_at) as date, SUM(duration) as minutes FROM pomodoro_sessions 
          WHERE date(completed_at) BETWEEN ? AND ? 
@@ -47,23 +48,23 @@ export const useCalendar = () => {
         [start, end]
       );
 
-      // Merge data
+      // Aggregate data
       const newStats: Record<string, DayStats> = {};
-      
-      habitLogs.forEach(row => {
-        if (!newStats[row.date]) newStats[row.date] = { date: row.date, completedTodos: 0, completedHabits: 0, pomodoroMinutes: 0 };
-        newStats[row.date].completedHabits = row.count;
+
+      habitLogs.forEach(log => {
+        if (!newStats[log.date]) newStats[log.date] = { date: log.date, pomodoroMinutes: 0, completedHabits: 0, completedTodos: 0 };
+        newStats[log.date].completedHabits = log.count;
       });
 
-      todoCounts.forEach(row => {
-        if (!row.due_date) return;
-        if (!newStats[row.due_date]) newStats[row.due_date] = { date: row.due_date, completedTodos: 0, completedHabits: 0, pomodoroMinutes: 0 };
-        newStats[row.due_date].completedTodos = row.count;
+      todoCounts.forEach(todo => {
+        // todo.due_date comes from date(created_at), so it's YYYY-MM-DD
+        if (!newStats[todo.due_date]) newStats[todo.due_date] = { date: todo.due_date, pomodoroMinutes: 0, completedHabits: 0, completedTodos: 0 };
+        newStats[todo.due_date].completedTodos = todo.count;
       });
 
-      pomodoroSessions.forEach(row => {
-        if (!newStats[row.date]) newStats[row.date] = { date: row.date, completedTodos: 0, completedHabits: 0, pomodoroMinutes: 0 };
-        newStats[row.date].pomodoroMinutes = row.minutes;
+      pomodoroSessions.forEach(session => {
+        if (!newStats[session.date]) newStats[session.date] = { date: session.date, pomodoroMinutes: 0, completedHabits: 0, completedTodos: 0 };
+        newStats[session.date].pomodoroMinutes = session.minutes;
       });
 
       setStats(newStats);
@@ -75,17 +76,21 @@ export const useCalendar = () => {
   }, [currentDate]);
 
   useEffect(() => {
-    fetchMonthStats();
-  }, [fetchMonthStats]);
+    fetchStats();
+  }, [fetchStats]);
 
-  const nextMonth = () => setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
-  const prevMonth = () => setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  const changeMonth = (delta: number) => {
+    setCurrentDate(prev => {
+      const newDate = new Date(prev);
+      newDate.setMonth(prev.getMonth() + delta);
+      return newDate;
+    });
+  };
 
   return {
     currentDate,
     stats,
     loading,
-    nextMonth,
-    prevMonth
+    changeMonth
   };
 };

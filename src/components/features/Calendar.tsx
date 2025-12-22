@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 export function Calendar() {
-  const { currentDate, stats, nextMonth, prevMonth } = useCalendar();
+  const { currentDate, stats, changeMonth } = useCalendar();
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const monthStart = startOfMonth(currentDate);
@@ -33,10 +33,10 @@ export function Calendar() {
             {format(currentDate, 'MMMM yyyy')}
           </h2>
           <div className="flex gap-2">
-            <button onClick={prevMonth} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg">
+            <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg">
               <ChevronLeft size={20} />
             </button>
-            <button onClick={nextMonth} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg">
+            <button onClick={() => changeMonth(1)} className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg">
               <ChevronRight size={20} />
             </button>
           </div>

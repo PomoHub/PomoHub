@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getDB } from '@/lib/db';
+import { format } from 'date-fns';
 
 export type PomodoroMode = 'work' | 'shortBreak' | 'longBreak';
 
@@ -75,9 +76,12 @@ export const usePomodoro = () => {
   const saveSession = useCallback(async (duration: number) => {
     try {
       const db = await getDB();
+      // Store local time for created_at to avoid timezone shifts
+      const createdAt = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
+      
       await db.execute(
         'INSERT INTO pomodoro_sessions (duration, label, completed_at) VALUES (?, ?, ?)',
-        [duration, 'Work Session', new Date().toISOString()]
+        [duration, 'Work Session', createdAt]
       );
     } catch (error) {
       console.error('Failed to save session:', error);

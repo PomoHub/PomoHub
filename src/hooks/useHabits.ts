@@ -53,9 +53,21 @@ export const useHabits = () => {
   const addHabit = async (title: string, color: string = '#3b82f6', frequency: 'daily' | 'weekly' = 'daily') => {
     try {
       const db = await getDB();
+      // Use local date for display consistency, ISO for storage if needed, but here created_at is metadata
+      const now = new Date();
+      // Use toISOString() but handle local timezone offset manually if strict local time is needed, 
+      // OR rely on the fact that UI displays relative time or just dates.
+      // However, the issue described is "1 day before". 
+      // new Date().toISOString() returns UTC. If user is in UTC+3, 23:00 becomes 20:00 previous day in UTC.
+      // SQLite queries often use string comparison.
+      // Best approach for simple local app: Store dates as 'YYYY-MM-DD HH:mm:ss' in local time 
+      // OR adjust display logic. 
+      // Let's format date as local ISO-like string for created_at to avoid UTC confusion in simple apps.
+      const createdAt = format(now, "yyyy-MM-dd'T'HH:mm:ss");
+      
       await db.execute(
         'INSERT INTO habits (title, color, frequency, created_at) VALUES (?, ?, ?, ?)',
-        [title, color, frequency, new Date().toISOString()]
+        [title, color, frequency, createdAt]
       );
       await fetchHabits();
     } catch (error) {

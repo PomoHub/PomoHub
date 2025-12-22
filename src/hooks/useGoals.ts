@@ -36,9 +36,12 @@ export const useGoals = () => {
     try {
       const db = await getDB();
       const targetDateStr = targetDate ? format(targetDate, 'yyyy-MM-dd') : null;
+      // Store local time for created_at to avoid timezone shifts
+      const createdAt = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
+
       await db.execute(
         'INSERT INTO goals (title, total, target_date, progress, created_at) VALUES (?, ?, ?, 0, ?)',
-        [title, total, targetDateStr, new Date().toISOString()]
+        [title, total, targetDateStr, createdAt]
       );
       await fetchGoals();
     } catch (error) {
