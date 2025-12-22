@@ -99,7 +99,7 @@ export function Settings() {
 
       <div className="pt-8 text-center">
         <p className="text-xs text-zinc-400">
-          Pomodoro Habit v0.1.0 • Built with Tauri & React
+          Pomodoro Habit v0.1.1 • Built with Tauri & React
         </p>
       </div>
     </div>

@@ -28,6 +28,20 @@ export const usePomodoro = () => {
   const [settings, setSettings] = useState<PomodoroSettings>(DEFAULT_SETTINGS);
   const [sessionsCompleted, setSessionsCompleted] = useState(0);
   
+  // Use refs to access latest state inside interval/timeouts without dependency issues
+  const stateRef = useRef({
+    mode,
+    timeLeft,
+    isActive,
+    settings,
+    sessionsCompleted
+  });
+
+  // Keep refs updated
+  useEffect(() => {
+    stateRef.current = { mode, timeLeft, isActive, settings, sessionsCompleted };
+  }, [mode, timeLeft, isActive, settings, sessionsCompleted]);
+
   // Use a ref for the timer interval to clear it properly
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -76,43 +90,57 @@ export const usePomodoro = () => {
   }, []);
 
   useEffect(() => {
-    if (isActive && timeLeft > 0) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && isActive) {
-      // Timer finished
-      setIsActive(false);
+    if (isActive) {
       if (timerRef.current) clearInterval(timerRef.current);
-      
-      // Play sound
-      const audio = new Audio('/notification.mp3'); // Ensure this file exists in public/
-      audio.play().catch(() => {});
-
-      if (mode === 'work') {
-        saveSession(settings.workDuration);
-        const newSessionsCompleted = sessionsCompleted + 1;
-        setSessionsCompleted(newSessionsCompleted);
-
-        // Decide next mode
-        if (newSessionsCompleted % settings.longBreakInterval === 0) {
-          switchMode('longBreak');
-          if (settings.autoStartBreaks) setIsActive(true);
+      timerRef.current = setInterval(() => {
+        const currentState = stateRef.current;
+        
+        if (currentState.timeLeft > 0) {
+          setTimeLeft((prev) => prev - 1);
         } else {
-          switchMode('shortBreak');
-          if (settings.autoStartBreaks) setIsActive(true);
+          // Timer finished
+          if (timerRef.current) clearInterval(timerRef.current);
+          setIsActive(false); // Stop immediately to prevent negative or loop
+          
+          // Play sound
+          const audio = new Audio('/notification.mp3'); 
+          audio.play().catch(() => {});
+
+          const { mode, settings, sessionsCompleted } = currentState;
+
+          if (mode === 'work') {
+            saveSession(settings.workDuration);
+            const newSessionsCompleted = sessionsCompleted + 1;
+            setSessionsCompleted(newSessionsCompleted);
+
+            // Decide next mode
+            let nextMode: PomodoroMode = 'shortBreak';
+            if (newSessionsCompleted % settings.longBreakInterval === 0) {
+              nextMode = 'longBreak';
+            }
+
+            switchMode(nextMode);
+            if (settings.autoStartBreaks) {
+               // Small delay to allow state updates to settle
+               setTimeout(() => setIsActive(true), 100);
+            }
+          } else {
+            // Break finished
+            switchMode('work');
+            if (settings.autoStartPomodoros) {
+               setTimeout(() => setIsActive(true), 100);
+            }
+          }
         }
-      } else {
-        // Break finished
-        switchMode('work');
-        if (settings.autoStartPomodoros) setIsActive(true);
-      }
+      }, 1000);
+    } else {
+      if (timerRef.current) clearInterval(timerRef.current);
     }
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isActive, timeLeft, mode, settings, saveSession, sessionsCompleted, switchMode]);
+  }, [isActive, saveSession, switchMode]); // Only re-run when active status changes
 
   const toggleTimer = () => setIsActive(!isActive);
 
