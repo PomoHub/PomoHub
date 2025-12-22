@@ -41,8 +41,8 @@ export const useTodos = () => {
       const db = await getDB();
       const dueDateStr = dueDate ? format(dueDate, 'yyyy-MM-dd') : null;
       await db.execute(
-        'INSERT INTO todos (title, due_date, completed) VALUES (?, ?, 0)',
-        [title, dueDateStr]
+        'INSERT INTO todos (title, due_date, completed, created_at) VALUES (?, ?, 0, ?)',
+        [title, dueDateStr, new Date().toISOString()]
       );
       await fetchTodos();
     } catch (error) {

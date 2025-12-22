@@ -37,8 +37,8 @@ export const useGoals = () => {
       const db = await getDB();
       const targetDateStr = targetDate ? format(targetDate, 'yyyy-MM-dd') : null;
       await db.execute(
-        'INSERT INTO goals (title, total, target_date, progress) VALUES (?, ?, ?, 0)',
-        [title, total, targetDateStr]
+        'INSERT INTO goals (title, total, target_date, progress, created_at) VALUES (?, ?, ?, 0, ?)',
+        [title, total, targetDateStr, new Date().toISOString()]
       );
       await fetchGoals();
     } catch (error) {

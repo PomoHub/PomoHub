@@ -3,7 +3,14 @@ import { Moon, Sun, Monitor, Image as ImageIcon, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Settings() {
-  const { theme, updateTheme, selectBackgroundImage, clearBackgroundImage, backgroundImage } = useSettings();
+  const { theme, updateTheme, selectBackgroundImage, clearBackgroundImage, backgroundImage, resetDatabase } = useSettings();
+
+  const handleReset = async () => {
+    if (confirm("Are you sure you want to delete all data? This cannot be undone.")) {
+      await resetDatabase();
+      alert("Database has been reset. Please restart the application.");
+    }
+  };
 
   return (
     <div className="w-full max-w-xl mx-auto space-y-8">
@@ -93,6 +100,29 @@ export function Settings() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Reset Data Section */}
+      <section className="space-y-4">
+        <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Data Management</h3>
+        <div className="p-4 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                Reset Application Data
+              </p>
+              <p className="text-xs text-zinc-500">
+                Delete all habits, todos, goals, and settings.
+              </p>
+            </div>
+            <button
+              onClick={handleReset}
+              className="px-3 py-1.5 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+            >
+              Reset All Data
+            </button>
           </div>
         </div>
       </section>

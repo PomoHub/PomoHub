@@ -76,8 +76,8 @@ export const usePomodoro = () => {
     try {
       const db = await getDB();
       await db.execute(
-        'INSERT INTO pomodoro_sessions (duration, label) VALUES (?, ?)',
-        [duration, 'Work Session']
+        'INSERT INTO pomodoro_sessions (duration, label, completed_at) VALUES (?, ?, ?)',
+        [duration, 'Work Session', new Date().toISOString()]
       );
     } catch (error) {
       console.error('Failed to save session:', error);

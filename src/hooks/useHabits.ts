@@ -54,8 +54,8 @@ export const useHabits = () => {
     try {
       const db = await getDB();
       await db.execute(
-        'INSERT INTO habits (title, color, frequency) VALUES (?, ?, ?)',
-        [title, color, frequency]
+        'INSERT INTO habits (title, color, frequency, created_at) VALUES (?, ?, ?, ?)',
+        [title, color, frequency, new Date().toISOString()]
       );
       await fetchHabits();
     } catch (error) {

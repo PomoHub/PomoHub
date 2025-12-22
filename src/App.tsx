@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppStore } from "./store";
 import { initDB } from "./lib/db";
 import { Modal } from "./components/ui/Modal";
@@ -21,10 +21,16 @@ import { useSettings } from "@/hooks/useSettings";
 
 function App() {
   const { activeModal, openModal, closeModal } = useAppStore();
-  const { backgroundImage } = useSettings(); // Initialize settings & theme on mount
+  const { backgroundImage } = useSettings(); 
+  const [dbStatus, setDbStatus] = useState<"loading" | "connected" | "error">("loading");
 
   useEffect(() => {
-    initDB().catch(console.error);
+    initDB()
+      .then(() => setDbStatus("connected"))
+      .catch((err) => {
+        console.error("DB Init Error:", err);
+        setDbStatus("error");
+      });
   }, []);
 
   const features = [
@@ -51,6 +57,11 @@ function App() {
 
       {/* Main Content */}
       <main className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
+        {dbStatus === "error" && (
+          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            Database Connection Failed. Please restart the app or check permissions.
+          </div>
+        )}
         <h1 className="text-4xl md:text-6xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-100 dark:to-zinc-400 drop-shadow-sm">
           Focus & Achieve
         </h1>

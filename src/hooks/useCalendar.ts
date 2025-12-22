@@ -29,17 +29,17 @@ export const useCalendar = () => {
         [start, end]
       );
 
-      // Fetch Completed Todos count per day (using completed_at if we had it, or due_date for now)
-      // Note: Schema doesn't have completed_at yet, assuming due_date for visualization or just created_at
-      // Let's use due_date for now as "tasks for that day"
+      // Fetch Completed Todos count per day
+      // Using created_at or due_date. Since created_at has time, we need to extract date.
+      // SQLite's date() function handles ISO strings "YYYY-MM-DDTHH:MM:SS..." correctly.
       const todoCounts = await db.select<{ due_date: string; count: number }[]>(
-        `SELECT due_date, COUNT(*) as count FROM todos 
-         WHERE due_date BETWEEN ? AND ? AND completed = 1 
-         GROUP BY due_date`,
+        `SELECT date(created_at) as due_date, COUNT(*) as count FROM todos 
+         WHERE completed = 1 AND date(created_at) BETWEEN ? AND ?
+         GROUP BY date(created_at)`,
         [start, end]
       );
 
-      // Fetch Pomodoro Sessions sum per day (completed_at)
+      // Fetch Pomodoro Sessions sum per day
       const pomodoroSessions = await db.select<{ date: string; minutes: number }[]>(
         `SELECT date(completed_at) as date, SUM(duration) as minutes FROM pomodoro_sessions 
          WHERE date(completed_at) BETWEEN ? AND ? 

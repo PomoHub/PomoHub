@@ -128,12 +128,29 @@ export const useSettings = () => {
     }
   };
 
+  const resetDatabase = async () => {
+    try {
+      const db = await getDB();
+      await db.execute("DROP TABLE IF EXISTS settings");
+      await db.execute("DROP TABLE IF EXISTS todos");
+      await db.execute("DROP TABLE IF EXISTS habits");
+      await db.execute("DROP TABLE IF EXISTS habit_logs");
+      await db.execute("DROP TABLE IF EXISTS pomodoro_sessions");
+      await db.execute("DROP TABLE IF EXISTS goals");
+      // Force reload to re-init DB
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to reset database:', error);
+    }
+  };
+
   return {
     theme,
     updateTheme,
     selectBackgroundImage,
     clearBackgroundImage,
     backgroundImage,
-    loading
+    loading,
+    resetDatabase
   };
 };

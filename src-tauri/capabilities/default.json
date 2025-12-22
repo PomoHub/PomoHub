@@ -9,6 +9,18 @@
     "core:default",
     "opener:default",
     "sql:default",
+    {
+      "identifier": "sql:allow-load",
+      "allow": [{ "name": "sqlite:pomodoro_habit.db" }]
+    },
+    {
+      "identifier": "sql:allow-execute",
+      "allow": [{ "name": "sqlite:pomodoro_habit.db" }]
+    },
+    {
+      "identifier": "sql:allow-select",
+      "allow": [{ "name": "sqlite:pomodoro_habit.db" }]
+    },
     "dialog:default",
     "fs:default",
     "fs:allow-read-text-file",
