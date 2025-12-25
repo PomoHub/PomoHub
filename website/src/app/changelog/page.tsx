@@ -1,6 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowLeft, Github } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { BrandLogo } from "@/components/BrandLogo";
 
 export const metadata = {
   title: "Changelog - PomoHub",
@@ -9,19 +10,20 @@ export const metadata = {
 
 export default function Changelog() {
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-900 selection:bg-zinc-900 selection:text-zinc-50">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 selection:bg-zinc-900 selection:text-zinc-50 dark:selection:bg-zinc-50 dark:selection:text-zinc-900">
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-zinc-200">
+      <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl group">
-            <ArrowLeft size={20} className="text-zinc-400 group-hover:text-zinc-900 transition-colors" />
-            <Image src="/pomodoro-habit/logos/pomohub-logo-black.svg" alt="PomoHub" width={120} height={32} />
+            <ArrowLeft size={20} className="text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-zinc-200 transition-colors" />
+            <BrandLogo width={120} height={32} />
           </Link>
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             <Link 
-              href="https://github.com/Gktw0o/pomodoro-habit" 
+              href="https://github.com/PomoHub/PomoHub" 
               target="_blank"
-              className="p-2 hover:bg-zinc-100 rounded-full transition-colors"
+              className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-colors"
             >
               <Github size={20} />
             </Link>
@@ -32,48 +34,48 @@ export default function Changelog() {
       <main className="max-w-4xl mx-auto px-4 pt-32 pb-20">
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4">Changelog</h1>
-          <p className="text-zinc-600">All the latest updates, improvements, and fixes.</p>
+          <p className="text-zinc-600 dark:text-zinc-400">All the latest updates, improvements, and fixes.</p>
         </div>
 
         <div className="space-y-12">
           {/* v0.1.3 */}
-          <div className="relative pl-8 border-l border-zinc-200">
-            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-900 border-2 border-white ring-4 ring-zinc-50"></div>
+          <div className="relative pl-8 border-l border-zinc-200 dark:border-zinc-800">
+            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-900 dark:bg-zinc-100 border-2 border-white dark:border-zinc-950 ring-4 ring-zinc-50 dark:ring-zinc-950"></div>
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
                 <h2 className="text-2xl font-bold">v0.1.3</h2>
-                <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">Latest</span>
-                <span className="text-zinc-400 text-sm">December 25, 2025</span>
+                <span className="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">Latest</span>
+                <span className="text-zinc-400 dark:text-zinc-500 text-sm">December 25, 2025</span>
               </div>
-              <p className="text-zinc-600">
+              <p className="text-zinc-600 dark:text-zinc-400">
                 Focusing on mobile reliability, notifications, and task management improvements.
               </p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">✨ New Features</h3>
-                <ul className="space-y-2 text-zinc-600">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">✨ New Features</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
                   <li className="flex items-start gap-2">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 shrink-0"></span>
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
                     <span><strong>Task Reminders:</strong> Set specific date and time reminders for your tasks.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 shrink-0"></span>
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
                     <span><strong>Custom Sounds:</strong> Upload your own custom notification sounds (.mp3, .wav).</span>
                   </li>
                 </ul>
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">🚀 Improvements</h3>
-                <ul className="space-y-2 text-zinc-600">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">🚀 Improvements</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
                   <li className="flex items-start gap-2">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 shrink-0"></span>
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
                     <span><strong>Background Timer:</strong> Pomodoro timer now works reliably in the background on Android.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 shrink-0"></span>
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
                     <span><strong>Native Notifications:</strong> Better integration with system notification centers on Windows and Android.</span>
                   </li>
                 </ul>
@@ -82,22 +84,22 @@ export default function Changelog() {
           </div>
 
           {/* v0.1.2 */}
-          <div className="relative pl-8 border-l border-zinc-200">
-            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 border-2 border-white"></div>
+          <div className="relative pl-8 border-l border-zinc-200 dark:border-zinc-800">
+            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 dark:bg-zinc-600 border-2 border-white dark:border-zinc-950"></div>
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
                 <h2 className="text-2xl font-bold">v0.1.2</h2>
-                <span className="text-zinc-400 text-sm">December 23, 2025</span>
+                <span className="text-zinc-400 dark:text-zinc-500 text-sm">December 23, 2025</span>
               </div>
-              <p className="text-zinc-600">
+              <p className="text-zinc-600 dark:text-zinc-400">
                 Introducing personalization, gamification, and mobile support!
               </p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">✨ New Features</h3>
-                <ul className="space-y-2 text-zinc-600">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">✨ New Features</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
                   <li className="flex items-start gap-2">
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0"></span>
                     <span><strong>User Profiles:</strong> Create a personalized profile with your name and birthday.</span>
@@ -132,22 +134,22 @@ export default function Changelog() {
           </div>
 
           {/* v0.1.1 */}
-          <div className="relative pl-8 border-l border-zinc-200">
-            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 border-2 border-white"></div>
+          <div className="relative pl-8 border-l border-zinc-200 dark:border-zinc-800">
+            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 dark:bg-zinc-600 border-2 border-white dark:border-zinc-950"></div>
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
                 <h2 className="text-2xl font-bold">v0.1.1</h2>
-                <span className="text-zinc-400 text-sm">December 23, 2025</span>
+                <span className="text-zinc-400 dark:text-zinc-500 text-sm">December 23, 2025</span>
               </div>
-              <p className="text-zinc-600">
+              <p className="text-zinc-600 dark:text-zinc-400">
                 A significant update focusing on stability, database reliability, and user experience improvements.
               </p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">✨ New Features</h3>
-                <ul className="space-y-2 text-zinc-600">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">✨ New Features</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
                   <li className="flex items-start gap-2">
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0"></span>
                     <span><strong>Auto-transition:</strong> Pomodoro timer now automatically switches between Work, Short Break, and Long Break modes.</span>
@@ -168,8 +170,8 @@ export default function Changelog() {
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">🐛 Bug Fixes</h3>
-                <ul className="space-y-2 text-zinc-600">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">🐛 Bug Fixes</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
                   <li className="flex items-start gap-2">
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0"></span>
                     <span><strong>Database Connection:</strong> Fixed a critical race condition that prevented creating new Habits, Todos, and Goals on startup.</span>
@@ -192,22 +194,22 @@ export default function Changelog() {
           </div>
 
           {/* v0.1.0 */}
-          <div className="relative pl-8 border-l border-zinc-200">
-            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 border-2 border-white"></div>
+          <div className="relative pl-8 border-l border-zinc-200 dark:border-zinc-800">
+            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 dark:bg-zinc-600 border-2 border-white dark:border-zinc-950"></div>
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
                 <h2 className="text-2xl font-bold">v0.1.0</h2>
-                <span className="text-zinc-400 text-sm">December 22, 2025</span>
+                <span className="text-zinc-400 dark:text-zinc-500 text-sm">December 22, 2025</span>
               </div>
-              <p className="text-zinc-600">
+              <p className="text-zinc-600 dark:text-zinc-400">
                 Initial public release.
               </p>
             </div>
 
             <div className="space-y-6">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">🚀 Initial Release</h3>
-                <ul className="space-y-2 text-zinc-600">
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">🚀 Initial Release</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
                   <li className="flex items-start gap-2">
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0"></span>
                     <span><strong>Pomodoro Timer:</strong> Customizable work/break intervals with circular progress visualization.</span>
