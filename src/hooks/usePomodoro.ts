@@ -35,6 +35,47 @@ export const usePomodoro = () => {
   // Ref for the end time of the current timer
   const endTimeRef = useRef<number | null>(null);
 
+  // Restore state on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('pomodoro_state');
+    if (saved) {
+      try {
+        const { mode: savedMode, endTime, isActive: savedIsActive, timeLeft: savedTimeLeft } = JSON.parse(saved);
+        if (savedMode) setMode(savedMode);
+        
+        if (savedIsActive && endTime) {
+           const now = Date.now();
+           const diff = Math.ceil((endTime - now) / 1000);
+           if (diff > 0) {
+             setTimeLeft(diff);
+             setIsActive(true);
+             endTimeRef.current = endTime;
+           } else {
+             // Timer finished while closed
+             setTimeLeft(0);
+             setIsActive(false);
+           }
+        } else if (!savedIsActive && savedTimeLeft) {
+           setTimeLeft(savedTimeLeft);
+           setIsActive(false);
+        }
+      } catch (e) {
+        console.error("Failed to restore state", e);
+      }
+    }
+  }, []);
+
+  // Save state when paused (including timeLeft updates like reset)
+  useEffect(() => {
+    if (!isActive) {
+       localStorage.setItem('pomodoro_state', JSON.stringify({
+          mode,
+          isActive: false,
+          timeLeft
+       }));
+    }
+  }, [mode, isActive, timeLeft]);
+
   // Request notification permission on mount
   useEffect(() => {
     const checkPermission = async () => {
@@ -151,11 +192,23 @@ export const usePomodoro = () => {
       if (!endTimeRef.current) {
         endTimeRef.current = Date.now() + timeLeft * 1000;
         
+        // Calculate end time string
+        const endDate = new Date(endTimeRef.current);
+        const endStr = endDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
         // Send notification on start
         sendNotification({
           title: stateRef.current.mode === 'work' ? 'Focus Started 🍅' : 'Break Started ☕',
-          body: `Timer set for ${Math.floor(timeLeft / 60)} minutes.`,
+          body: `Timer set for ${Math.floor(timeLeft / 60)} minutes. Ends at ${endStr}.`,
+          sound: 'default'
         });
+
+        // Persist active state
+        localStorage.setItem('pomodoro_state', JSON.stringify({
+          mode: stateRef.current.mode,
+          isActive: true,
+          endTime: endTimeRef.current
+        }));
       }
 
       if (timerRef.current) clearInterval(timerRef.current);

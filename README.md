@@ -87,6 +87,13 @@ A modern, all-in-one productivity application built with **Tauri**, **React**, a
 - [ ] **Advanced Analytics:** Charts and graphs for long-term productivity trends.
 - [ ] **Gamification:** Badges and achievements for reaching goals.
 
+## 📱 Mobile Support (Android)
+
+PomoHub is available for Android!
+- **Requirements:** Android SDK, Java 17+, Rust, Tauri CLI.
+- **Build:** `bun tauri android build`
+- **Run:** `bun tauri android dev`
+
 ---
 
 ## 🛠️ Tech Stack
