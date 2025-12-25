@@ -1,4 +1,4 @@
-# Pomodoro Habit 🍅
+# PomoHub 🍅
 
 A modern, all-in-one productivity application built with **Tauri**, **React**, and **TypeScript**. Combine the power of the Pomodoro technique with habit tracking, goal setting, and task management in a beautiful, customizable interface.
 
@@ -61,13 +61,20 @@ A modern, all-in-one productivity application built with **Tauri**, **React**, a
 - **New:** Added "Long Break Interval" setting to customize session count before long break.
 - **New:** Added sound notification (placeholder) on timer completion.
 
-### v0.1.2 (Current)
+### v0.1.3 (Current)
+- **New:** Daily Task Reminders (Notifications).
+- **Improvement:** Reliable Background Timer (Timestamp-based logic).
+- **Improvement:** Native Notifications for Desktop & Android.
+- **Improvement:** Custom Notification Sounds (File selection).
+- **Fix:** Android background execution issues.
+
+### v0.1.2
 - **New:** User Onboarding & Profile System (Name, Birthday).
 - **New:** Birthday Celebration with confetti.
 - **New:** Seasonal Winter Snowfall effect (Dec-Feb).
 - **New:** Profile Page with comprehensive statistics (Total Time, Streaks).
 - **New:** Achievements System with unlock notifications.
-- **New:** Customizable Notification Sounds.
+- **New:** Customizable Notification Sounds (Presets).
 - **New:** Android Support (Tauri Mobile initialized).
 
 ### v0.2.0 (Planned)

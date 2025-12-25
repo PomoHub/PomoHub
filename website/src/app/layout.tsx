@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pomodoro Habit - Focus & Achieve",
+  title: "PomoHub - Focus & Achieve",
   description: "A modern productivity app combining Pomodoro timer, habit tracking, and goal setting.",
 };
 

@@ -22,31 +22,31 @@ export const useCalendar = () => {
       const end = format(endOfMonth(currentDate), 'yyyy-MM-dd');
 
       // Fetch Habit Logs count per day
-      const habitLogs = await db.select<{ date: string; count: number }[]>(
+      const habitLogs = await db.select(
         `SELECT date, COUNT(*) as count FROM habit_logs 
          WHERE date BETWEEN ? AND ? AND completed = 1 
          GROUP BY date`,
         [start, end]
-      );
+      ) as { date: string; count: number }[];
 
       // Fetch Completed Todos count per day
       // Using created_at or due_date. Since created_at has time, we need to extract date.
       // SQLite's date() function handles ISO strings "YYYY-MM-DDTHH:MM:SS..." correctly.
-      const todoCounts = await db.select<{ due_date: string; count: number }[]>(
+      const todoCounts = await db.select(
         `SELECT date(created_at) as due_date, COUNT(*) as count FROM todos 
          WHERE completed = 1 AND date(created_at) BETWEEN ? AND ?
          GROUP BY date(created_at)`,
         [start, end]
-      );
+      ) as { due_date: string; count: number }[];
 
       // Fetch Pomodoro Sessions sum per day
       // Using date(completed_at) which works for both 'YYYY-MM-DDTHH:mm:ss' (ISO) and 'YYYY-MM-DD HH:mm:ss' (Local)
-      const pomodoroSessions = await db.select<{ date: string; minutes: number }[]>(
+      const pomodoroSessions = await db.select(
         `SELECT date(completed_at) as date, SUM(duration) as minutes FROM pomodoro_sessions 
          WHERE date(completed_at) BETWEEN ? AND ? 
          GROUP BY date(completed_at)`,
         [start, end]
-      );
+      ) as { date: string; minutes: number }[];
 
       // Aggregate data
       const newStats: Record<string, DayStats> = {};

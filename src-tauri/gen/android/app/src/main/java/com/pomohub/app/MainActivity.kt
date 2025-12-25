@@ -1,4 +1,4 @@
-package com.pomodorohabit.app
+package com.pomohub.app
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

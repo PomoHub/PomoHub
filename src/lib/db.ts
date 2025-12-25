@@ -28,9 +28,17 @@ export const initDB = async () => {
           title TEXT NOT NULL,
           completed BOOLEAN DEFAULT 0,
           due_date TEXT,
+          reminder_time TEXT,
           created_at TEXT DEFAULT CURRENT_TIMESTAMP
         );
       `);
+
+      // Migration: Add reminder_time column if it doesn't exist
+      try {
+        await db.execute(`ALTER TABLE todos ADD COLUMN reminder_time TEXT;`);
+      } catch (e) {
+        // Column likely already exists
+      }
 
       await db.execute(`
         CREATE TABLE IF NOT EXISTS habits (

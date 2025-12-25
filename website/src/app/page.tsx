@@ -44,7 +44,7 @@ export default function Home() {
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-zinc-200">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-xl">
-            <span className="bg-gradient-to-br from-zinc-900 to-zinc-600 bg-clip-text text-transparent">Pomodoro Habit</span>
+             <Image src="/logos/pomohub-logo-black.svg" alt="PomoHub" width={150} height={40} priority />
           </div>
           <div className="flex items-center gap-4">
             <Link 
@@ -76,7 +76,7 @@ export default function Home() {
             v0.1.2 Released
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-b from-zinc-900 to-zinc-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-linear-to-b from-zinc-900 to-zinc-600 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-8 duration-700">
             Master Your Focus.<br />Build Better Habits.
           </h1>
           

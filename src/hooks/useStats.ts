@@ -10,6 +10,33 @@ export interface UserStats {
   longestStreak: number;
 }
 
+// Helper function to fetch stats (extracted to avoid dependency issues)
+const fetchStatsFromDB = async (db: any) => {
+  // Pomodoro Minutes
+  const pomodoroResult = await db.select(
+    'SELECT SUM(duration) as total FROM pomodoro_sessions'
+  ) as { total: number }[];
+  const totalPomodoroMinutes = pomodoroResult[0]?.total || 0;
+
+  // Habits Completed
+  const habitsResult = await db.select(
+    'SELECT COUNT(*) as count FROM habit_logs WHERE completed = 1'
+  ) as { count: number }[];
+  const totalHabitsCompleted = habitsResult[0]?.count || 0;
+
+  // Todos Completed
+  const todosResult = await db.select(
+    'SELECT COUNT(*) as count FROM todos WHERE completed = 1'
+  ) as { count: number }[];
+  const totalTodosCompleted = todosResult[0]?.count || 0;
+
+  return {
+    totalPomodoroMinutes,
+    totalHabitsCompleted,
+    totalTodosCompleted,
+  };
+};
+
 export const useStats = () => {
   const [stats, setStats] = useState<UserStats>({
     totalPomodoroMinutes: 0,
@@ -92,31 +119,14 @@ export const useStats = () => {
       setLoading(true);
       const db = await getDB();
 
-      // Pomodoro Minutes
-      const pomodoroResult = await db.select<{ total: number }[]>(
-        'SELECT SUM(duration) as total FROM pomodoro_sessions'
-      );
-      const totalPomodoroMinutes = pomodoroResult[0]?.total || 0;
-
-      // Habits Completed
-      const habitsResult = await db.select<{ count: number }[]>(
-        'SELECT COUNT(*) as count FROM habit_logs WHERE completed = 1'
-      );
-      const totalHabitsCompleted = habitsResult[0]?.count || 0;
-
-      // Todos Completed
-      const todosResult = await db.select<{ count: number }[]>(
-        'SELECT COUNT(*) as count FROM todos WHERE completed = 1'
-      );
-      const totalTodosCompleted = todosResult[0]?.count || 0;
-
       // Streaks
       const streaks = await calculateStreak(db);
+      
+      // Other stats
+      const otherStats = await fetchStatsFromDB(db);
 
       setStats({
-        totalPomodoroMinutes,
-        totalHabitsCompleted,
-        totalTodosCompleted,
+        ...otherStats,
         currentStreak: streaks.current,
         longestStreak: streaks.longest,
       });

@@ -11,7 +11,8 @@ export function Settings() {
     backgroundImage, 
     resetDatabase,
     notificationSound,
-    updateNotificationSound
+    updateNotificationSound,
+    selectNotificationSound
   } = useSettings();
 
   const sounds = [
@@ -80,7 +81,7 @@ export function Settings() {
         <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Background</h3>
         <div className="p-4 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-lg bg-zinc-100 dark:bg-zinc-800 flex-shrink-0 overflow-hidden border border-zinc-200 dark:border-zinc-700">
+            <div className="w-20 h-20 rounded-lg bg-zinc-100 dark:bg-zinc-800 shrink-0 overflow-hidden border border-zinc-200 dark:border-zinc-700">
               {backgroundImage ? (
                 <img src={backgroundImage} alt="Background" className="w-full h-full object-cover" />
               ) : (
@@ -95,7 +96,7 @@ export function Settings() {
                 Custom Wallpaper
               </p>
               <p className="text-xs text-zinc-500 mb-3">
-                Select an image from your computer to use as the background.
+                Select an image from your device to use as the background.
               </p>
               
               <div className="flex gap-2">
@@ -153,6 +154,21 @@ export function Settings() {
                 {sound.label}
               </button>
             ))}
+            
+            <button
+                onClick={selectNotificationSound}
+                className={cn(
+                  "px-4 py-2 text-sm rounded-lg border transition-all text-left col-span-2 flex items-center justify-between",
+                  !sounds.some(s => s.id === notificationSound)
+                    ? "bg-indigo-50 border-indigo-500 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-300"
+                    : "bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                )}
+              >
+                <span>
+                    {!sounds.some(s => s.id === notificationSound) && notificationSound ? 'Custom Sound Selected' : 'Custom Sound...'}
+                </span>
+                {!sounds.some(s => s.id === notificationSound) && notificationSound && <span className="text-xs opacity-70 truncate max-w-37.5">{notificationSound}</span>}
+            </button>
           </div>
         </div>
       </section>
@@ -182,7 +198,7 @@ export function Settings() {
 
       <div className="pt-8 text-center">
         <p className="text-xs text-zinc-400">
-          Pomodoro Habit v0.1.2 • Built with Tauri & React
+          Pomodoro Habit v0.1.3 • Built with Tauri & React
         </p>
       </div>
     </div>

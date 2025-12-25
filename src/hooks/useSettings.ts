@@ -35,7 +35,10 @@ export const useSettings = () => {
       try {
         setLoading(true);
         const db = await getDB();
-        const result = await db.select<{ key: string, value: string }[]>('SELECT * FROM settings WHERE key IN (?, ?, ?)', ['theme', 'background_image', 'notification_sound']);
+        const result = await db.select(
+          'SELECT * FROM settings WHERE key IN (?, ?, ?)', 
+          ['theme', 'background_image', 'notification_sound']
+        ) as { key: string, value: string }[];
         
         for (const row of result) {
           if (row.key === 'theme') {
@@ -148,6 +151,25 @@ export const useSettings = () => {
     }
   };
 
+  const selectNotificationSound = async () => {
+    try {
+      const selected = await open({
+        multiple: false,
+        filters: [{
+          name: 'Audio',
+          extensions: ['mp3', 'wav', 'ogg']
+        }]
+      });
+
+      if (selected && typeof selected === 'string') {
+        // Store the path
+        await updateNotificationSound(selected);
+      }
+    } catch (error) {
+      console.error('Failed to select sound:', error);
+    }
+  };
+
   const updateNotificationSound = async (sound: string) => {
     setNotificationSound(sound);
     try {
@@ -171,6 +193,7 @@ export const useSettings = () => {
     loading,
     resetDatabase,
     notificationSound,
-    updateNotificationSound
+    updateNotificationSound,
+    selectNotificationSound
   };
 };

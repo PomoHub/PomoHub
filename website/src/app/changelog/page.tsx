@@ -3,8 +3,8 @@ import Image from "next/image";
 import { ArrowLeft, Github } from "lucide-react";
 
 export const metadata = {
-  title: "Changelog - Pomodoro Habit",
-  description: "Release notes and updates for Pomodoro Habit.",
+  title: "Changelog - PomoHub",
+  description: "Release notes and updates for PomoHub.",
 };
 
 export default function Changelog() {
@@ -15,7 +15,7 @@ export default function Changelog() {
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl group">
             <ArrowLeft size={20} className="text-zinc-400 group-hover:text-zinc-900 transition-colors" />
-            <span className="bg-gradient-to-br from-zinc-900 to-zinc-600 bg-clip-text text-transparent">Back to Home</span>
+            <Image src="/logos/pomohub-logo-black.svg" alt="PomoHub" width={120} height={32} />
           </Link>
           <div className="flex items-center gap-4">
             <Link 
@@ -36,13 +36,57 @@ export default function Changelog() {
         </div>
 
         <div className="space-y-12">
+          {/* v0.1.3 */}
+          <div className="relative pl-8 border-l border-zinc-200">
+            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-900 border-2 border-white ring-4 ring-zinc-50"></div>
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-2xl font-bold">v0.1.3</h2>
+                <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">Latest</span>
+                <span className="text-zinc-400 text-sm">December 25, 2025</span>
+              </div>
+              <p className="text-zinc-600">
+                Focusing on mobile reliability, notifications, and task management improvements.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">✨ New Features</h3>
+                <ul className="space-y-2 text-zinc-600">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 shrink-0"></span>
+                    <span><strong>Task Reminders:</strong> Set specific date and time reminders for your tasks.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 shrink-0"></span>
+                    <span><strong>Custom Sounds:</strong> Upload your own custom notification sounds (.mp3, .wav).</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-semibold text-zinc-900 uppercase tracking-wider mb-3">🚀 Improvements</h3>
+                <ul className="space-y-2 text-zinc-600">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 shrink-0"></span>
+                    <span><strong>Background Timer:</strong> Pomodoro timer now works reliably in the background on Android.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 shrink-0"></span>
+                    <span><strong>Native Notifications:</strong> Better integration with system notification centers on Windows and Android.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
           {/* v0.1.2 */}
           <div className="relative pl-8 border-l border-zinc-200">
-            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-blue-500 border-2 border-white ring-2 ring-blue-100"></div>
+            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 border-2 border-white"></div>
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
                 <h2 className="text-2xl font-bold">v0.1.2</h2>
-                <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-medium border border-blue-200">Latest</span>
                 <span className="text-zinc-400 text-sm">December 23, 2025</span>
               </div>
               <p className="text-zinc-600">
@@ -68,7 +112,7 @@ export default function Changelog() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0"></span>
-                    <span><strong>Achievements System:</strong> Unlock badges for milestones like "100 Hours of Focus" or "50 Day Streak".</span>
+                    <span><strong>Achievements System:</strong> Unlock badges for milestones like &quot;100 Hours of Focus&quot; or &quot;50 Day Streak&quot;.</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0"></span>
@@ -118,7 +162,7 @@ export default function Changelog() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-400 shrink-0"></span>
-                    <span><strong>Reset Data:</strong> Added a "Reset All Data" option in Settings to clear the database and start fresh.</span>
+                    <span><strong>Reset Data:</strong> Added a &quot;Reset All Data&quot; option in Settings to clear the database and start fresh.</span>
                   </li>
                 </ul>
               </div>

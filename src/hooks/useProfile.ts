@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getDB } from '@/lib/db';
 
 export interface UserProfile {
@@ -13,26 +13,27 @@ export const useProfile = () => {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       setLoading(true);
       const db = await getDB();
-      const result = await db.select<UserProfile[]>('SELECT * FROM user_profile WHERE id = 1');
+      const result = await db.select(
+        'SELECT * FROM user_profile WHERE id = 1'
+      ) as UserProfile[];
+      
       if (result.length > 0) {
         setProfile(result[0]);
-      } else {
-        setProfile(null);
       }
     } catch (error) {
       console.error('Failed to fetch profile:', error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);
 
   const createProfile = async (firstName: string, lastName: string, birthDate: string) => {
     try {

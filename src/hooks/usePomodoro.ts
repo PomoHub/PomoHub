@@ -1,8 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getDB } from '@/lib/db';
 import { format } from 'date-fns';
+import { sendNotification, requestPermission, isPermissionGranted } from '@tauri-apps/plugin-notification';
+import { convertFileSrc } from '@tauri-apps/api/core';
 
 export type PomodoroMode = 'work' | 'shortBreak' | 'longBreak';
+
 
 interface PomodoroSettings {
   workDuration: number; // in minutes
@@ -29,6 +32,21 @@ export const usePomodoro = () => {
   const [settings, setSettings] = useState<PomodoroSettings>(DEFAULT_SETTINGS);
   const [sessionsCompleted, setSessionsCompleted] = useState(0);
   
+  // Ref for the end time of the current timer
+  const endTimeRef = useRef<number | null>(null);
+
+  // Request notification permission on mount
+  useEffect(() => {
+    const checkPermission = async () => {
+      let permission = await isPermissionGranted();
+      if (!permission) {
+        const request = await requestPermission();
+        permission = request === 'granted';
+      }
+    };
+    checkPermission();
+  }, []);
+
   // Use refs to access latest state inside interval/timeouts without dependency issues
   const stateRef = useRef({
     mode,
@@ -51,7 +69,11 @@ export const usePomodoro = () => {
     const loadSettings = async () => {
       try {
         const db = await getDB();
-        const result = await db.select<{ value: string }[]>('SELECT value FROM settings WHERE key = ?', ['pomodoro_settings']);
+        const result = await db.select(
+          'SELECT value FROM settings WHERE key = ?', 
+          ['pomodoro_settings']
+        ) as { value: string }[];
+        
         if (result.length > 0) {
           setSettings({ ...DEFAULT_SETTINGS, ...JSON.parse(result[0].value) });
         }
@@ -70,6 +92,7 @@ export const usePomodoro = () => {
         mode === 'shortBreak' ? settings.shortBreakDuration :
         settings.longBreakDuration;
       setTimeLeft(duration * 60);
+      endTimeRef.current = null;
     }
   }, [mode, settings, isActive]);
 
@@ -93,22 +116,74 @@ export const usePomodoro = () => {
     // timeLeft will be updated by the useEffect listening to 'mode'
   }, []);
 
+  const playNotificationSound = useCallback(async () => {
+    // Check if there is a custom sound in settings
+    try {
+        const db = await getDB();
+        const result = await db.select(
+          'SELECT value FROM settings WHERE key = ?', 
+          ['notification_sound']
+        ) as { value: string }[];
+        
+        let soundPath = '/notification.mp3';
+        if (result.length > 0) {
+             const stored = JSON.parse(result[0].value);
+             // Presets
+             if (stored === 'bell') soundPath = '/sounds/bell.mp3'; // Example mapping if we had files
+             else if (stored === 'digital') soundPath = '/sounds/digital.mp3';
+             else if (stored === 'nature') soundPath = '/sounds/nature.mp3';
+             else if (stored !== 'default') {
+                 // It's a custom path
+                 soundPath = convertFileSrc(stored);
+             }
+        }
+        const audio = new Audio(soundPath);
+        audio.play().catch(() => {});
+    } catch (e) {
+        const audio = new Audio('/notification.mp3');
+        audio.play().catch(() => {});
+    }
+  }, []);
+
   useEffect(() => {
     if (isActive) {
+      // If we don't have an endTime yet (just started or resumed), calculate it
+      if (!endTimeRef.current) {
+        endTimeRef.current = Date.now() + timeLeft * 1000;
+        
+        // Send notification on start
+        sendNotification({
+          title: stateRef.current.mode === 'work' ? 'Focus Started 🍅' : 'Break Started ☕',
+          body: `Timer set for ${Math.floor(timeLeft / 60)} minutes.`,
+        });
+      }
+
       if (timerRef.current) clearInterval(timerRef.current);
       timerRef.current = setInterval(() => {
         const currentState = stateRef.current;
+        const now = Date.now();
+        const target = endTimeRef.current!;
+        const diff = Math.ceil((target - now) / 1000);
         
-        if (currentState.timeLeft > 0) {
-          setTimeLeft((prev) => prev - 1);
+        if (diff > 0) {
+          setTimeLeft(diff);
+          // Optional: Update notification periodically? (Maybe every minute)
+          // Doing it every second is too heavy for JS -> Native bridge usually
         } else {
           // Timer finished
           if (timerRef.current) clearInterval(timerRef.current);
-          setIsActive(false); // Stop immediately to prevent negative or loop
+          setIsActive(false); 
+          endTimeRef.current = null;
+          setTimeLeft(0);
           
           // Play sound
-          const audio = new Audio('/notification.mp3'); 
-          audio.play().catch(() => {});
+          playNotificationSound();
+          
+          // Send Notification
+          sendNotification({
+            title: currentState.mode === 'work' ? 'Focus Session Complete! 🎉' : 'Break Over! 🚀',
+            body: currentState.mode === 'work' ? 'Great job! Take a break.' : 'Time to get back to work!',
+          });
 
           const { mode, settings, sessionsCompleted } = currentState;
 
@@ -136,20 +211,23 @@ export const usePomodoro = () => {
             }
           }
         }
-      }, 1000);
+      }, 200); // Check more frequently than 1s to be accurate, but update state based on diff
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
+      // If paused, we keep endTimeRef null so when resumed it recalculates based on current timeLeft
+      endTimeRef.current = null;
     }
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isActive, saveSession, switchMode]); // Only re-run when active status changes
+  }, [isActive, saveSession, switchMode, playNotificationSound]);
 
   const toggleTimer = () => setIsActive(!isActive);
 
   const resetTimer = () => {
     setIsActive(false);
+    endTimeRef.current = null;
     const duration = 
       mode === 'work' ? settings.workDuration :
       mode === 'shortBreak' ? settings.shortBreakDuration :
@@ -160,6 +238,7 @@ export const usePomodoro = () => {
   const changeMode = (newMode: PomodoroMode) => {
     setMode(newMode);
     setIsActive(false);
+    endTimeRef.current = null;
   };
 
   const updateSettings = async (newSettings: Partial<PomodoroSettings>) => {

@@ -16,7 +16,9 @@ export const useAchievements = () => {
   const fetchUnlocked = useCallback(async () => {
     try {
       const db = await getDB();
-      const result = await db.select<UnlockedAchievement[]>('SELECT * FROM achievements');
+      const result = await db.select(
+        'SELECT * FROM achievements'
+      ) as UnlockedAchievement[];
       setUnlocked(result);
     } catch (error) {
       console.error('Failed to fetch achievements:', error);

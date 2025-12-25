@@ -1,5 +1,5 @@
 import { useTodos } from "@/hooks/useTodos";
-import { Plus, Trash2, Calendar as CalendarIcon, Check } from "lucide-react";
+import { Plus, Trash2, Calendar as CalendarIcon, Check, Bell } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -7,7 +7,8 @@ import { format } from "date-fns";
 export function TodoList() {
   const { todos, loading, addTodo, toggleTodo, deleteTodo } = useTodos();
   const [newTodoTitle, setNewTodoTitle] = useState("");
-  const [dueDate, setDueDate] = useState<string>(""); // YYYY-MM-DD format from input
+  const [dueDate, setDueDate] = useState<string>(""); // YYYY-MM-DD
+  const [reminderTime, setReminderTime] = useState<string>(""); // YYYY-MM-DDTHH:mm
   const [isAdding, setIsAdding] = useState(false);
 
   const handleAdd = async (e: React.FormEvent) => {
@@ -16,10 +17,12 @@ export function TodoList() {
 
     await addTodo(
       newTodoTitle, 
-      dueDate ? new Date(dueDate) : undefined
+      dueDate ? new Date(dueDate) : undefined,
+      reminderTime ? new Date(reminderTime) : undefined
     );
     setNewTodoTitle("");
     setDueDate("");
+    setReminderTime("");
     setIsAdding(false);
   };
 
@@ -54,14 +57,26 @@ export function TodoList() {
               autoFocus
             />
             
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-zinc-500 mr-2">Due Date:</span>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="p-1.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
-              />
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-zinc-500 mr-2">Due Date:</span>
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="p-1.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-zinc-500 mr-2">Reminder:</span>
+                <input
+                  type="datetime-local"
+                  value={reminderTime}
+                  onChange={(e) => setReminderTime(e.target.value)}
+                  className="p-1.5 text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
             </div>
 
             <div className="flex justify-end gap-2 mt-2">
@@ -124,9 +139,15 @@ export function TodoList() {
                   {todo.title}
                 </span>
                 {todo.due_date && (
-                  <div className="flex items-center gap-1 text-xs text-zinc-400 mt-0.5">
-                    <CalendarIcon size={10} />
-                    <span>{format(new Date(todo.due_date), 'MMM d')}</span>
+                  <div className="flex items-center gap-1 text-xs text-zinc-500 mt-1">
+                    <CalendarIcon size={12} />
+                    <span>{format(new Date(todo.due_date), 'MMM d, yyyy')}</span>
+                  </div>
+                )}
+                {todo.reminder_time && (
+                  <div className="flex items-center gap-1 text-xs text-blue-500 mt-0.5">
+                    <Bell size={12} />
+                    <span>{format(new Date(todo.reminder_time), 'MMM d, HH:mm')}</span>
                   </div>
                 )}
               </div>

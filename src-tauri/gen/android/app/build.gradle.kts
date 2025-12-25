@@ -22,7 +22,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     compileSdk = 36
-    namespace = "com.pomodorohabit.app"
+    namespace = "com.pomohub.app"
     signingConfigs {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"] as String
@@ -34,11 +34,11 @@ android {
 
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
-        applicationId = "com.pomodorohabit.app"
+        applicationId = "com.pomohub.app"
         minSdk = 24
         targetSdk = 36
-        versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
-        versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
+        versionCode = tauriProperties.getProperty("tauri.android.versionCode", "2").toInt()
+        versionName = tauriProperties.getProperty("tauri.android.versionName", "0.1.3")
     }
     buildTypes {
         getByName("debug") {

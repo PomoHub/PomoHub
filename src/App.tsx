@@ -25,6 +25,7 @@ import { SeasonalSnowfall } from "@/components/features/SeasonalSnowfall";
 import { OnboardingModal } from "@/components/onboarding/OnboardingModal";
 import { BirthdayCelebration } from "@/components/onboarding/BirthdayCelebration";
 import { AchievementToast } from "@/components/features/AchievementToast";
+import { ReminderManager } from "@/components/features/ReminderManager";
 
 function App() {
   const { activeModal, openModal, closeModal } = useAppStore();
@@ -78,6 +79,7 @@ function App() {
       <OnboardingModal />
       <BirthdayCelebration />
       <AchievementToast />
+      <ReminderManager />
 
       {/* Main Content */}
       <main className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8">
@@ -86,7 +88,7 @@ function App() {
             Database Connection Failed. Please restart the app or check permissions.
           </div>
         )}
-        <h1 className="text-4xl md:text-6xl font-bold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-zinc-800 to-zinc-500 dark:from-zinc-100 dark:to-zinc-400 drop-shadow-sm">
+        <h1 className="text-4xl md:text-6xl font-bold mb-12 text-center text-transparent bg-clip-text bg-linear-to-r from-zinc-800 to-zinc-500 dark:from-zinc-100 dark:to-zinc-400 drop-shadow-sm select-none">
           Focus & Achieve
         </h1>
 

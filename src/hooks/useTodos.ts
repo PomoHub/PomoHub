@@ -7,6 +7,7 @@ export interface Todo {
   title: string;
   completed: boolean;
   due_date: string | null;
+  reminder_time: string | null;
   created_at: string;
 }
 
@@ -18,7 +19,10 @@ export const useTodos = () => {
     try {
       setLoading(true);
       const db = await getDB();
-      const data = await db.select<Todo[]>('SELECT * FROM todos ORDER BY completed ASC, created_at DESC');
+      const data = await db.select(
+        'SELECT * FROM todos ORDER BY completed ASC, created_at DESC'
+      ) as Todo[];
+      
       // SQLite stores booleans as 0/1, convert them
       const parsedData = data.map(todo => ({
         ...todo,
@@ -36,16 +40,17 @@ export const useTodos = () => {
     fetchTodos();
   }, [fetchTodos]);
 
-  const addTodo = async (title: string, dueDate?: Date) => {
+  const addTodo = async (title: string, dueDate?: Date, reminderTime?: Date) => {
     try {
       const db = await getDB();
       const dueDateStr = dueDate ? format(dueDate, 'yyyy-MM-dd') : null;
+      const reminderStr = reminderTime ? format(reminderTime, "yyyy-MM-dd'T'HH:mm:ss") : null;
       // Store local time for created_at to avoid timezone shifts
       const createdAt = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
       
       await db.execute(
-        'INSERT INTO todos (title, due_date, completed, created_at) VALUES (?, ?, 0, ?)',
-        [title, dueDateStr, createdAt]
+        'INSERT INTO todos (title, due_date, reminder_time, completed, created_at) VALUES (?, ?, ?, 0, ?)',
+        [title, dueDateStr, reminderStr, createdAt]
       );
       await fetchTodos();
     } catch (error) {
@@ -63,7 +68,7 @@ export const useTodos = () => {
       // Optimistic update
       setTodos(prev => prev.map(t => 
         t.id === id ? { ...t, completed: !t.completed } : t
-      ).sort((a, b) => Number(a.completed) - Number(b.completed))); // Re-sort: uncompleted first
+      ));
     } catch (error) {
       console.error('Failed to toggle todo:', error);
       await fetchTodos();

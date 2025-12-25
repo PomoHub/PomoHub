@@ -20,22 +20,17 @@ export const useHabits = () => {
     try {
       setLoading(true);
       const db = await getDB();
-      const todayStr = format(new Date(), 'yyyy-MM-dd');
-
-      // Fetch all habits
-      const habitsData = await db.select<Habit[]>('SELECT * FROM habits ORDER BY created_at DESC');
-
-      // Fetch logs for today to check completion
-      const logsData = await db.select<{ habit_id: number }[]>(
-        'SELECT habit_id FROM habit_logs WHERE date = ? AND completed = 1',
-        [todayStr]
-      );
-
-      const completedHabitIds = new Set(logsData.map(l => l.habit_id));
+      const today = format(new Date(), 'yyyy-MM-dd');
+      
+      const habitsData = await db.select('SELECT * FROM habits') as Habit[];
+      const logsData = await db.select(
+        'SELECT * FROM habit_logs WHERE date = ?', 
+        [today]
+      ) as { habit_id: number; completed: number }[];
 
       const habitsWithStatus = habitsData.map(habit => ({
         ...habit,
-        completedToday: completedHabitIds.has(habit.id)
+        completedToday: logsData.some(log => log.habit_id === habit.id && log.completed)
       }));
 
       setHabits(habitsWithStatus);
@@ -50,24 +45,14 @@ export const useHabits = () => {
     fetchHabits();
   }, [fetchHabits]);
 
-  const addHabit = async (title: string, color: string = '#3b82f6', frequency: 'daily' | 'weekly' = 'daily') => {
+  const addHabit = async (title: string, color: string) => {
     try {
       const db = await getDB();
-      // Use local date for display consistency, ISO for storage if needed, but here created_at is metadata
-      const now = new Date();
-      // Use toISOString() but handle local timezone offset manually if strict local time is needed, 
-      // OR rely on the fact that UI displays relative time or just dates.
-      // However, the issue described is "1 day before". 
-      // new Date().toISOString() returns UTC. If user is in UTC+3, 23:00 becomes 20:00 previous day in UTC.
-      // SQLite queries often use string comparison.
-      // Best approach for simple local app: Store dates as 'YYYY-MM-DD HH:mm:ss' in local time 
-      // OR adjust display logic. 
-      // Let's format date as local ISO-like string for created_at to avoid UTC confusion in simple apps.
-      const createdAt = format(now, "yyyy-MM-dd'T'HH:mm:ss");
+      const createdAt = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
       
       await db.execute(
-        'INSERT INTO habits (title, color, frequency, created_at) VALUES (?, ?, ?, ?)',
-        [title, color, frequency, createdAt]
+        'INSERT INTO habits (title, color, created_at) VALUES (?, ?, ?)',
+        [title, color, createdAt]
       );
       await fetchHabits();
     } catch (error) {
