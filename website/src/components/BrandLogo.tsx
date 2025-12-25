@@ -10,14 +10,14 @@ export function BrandLogo({ width = 150, height = 40, className = "" }: BrandLog
   return (
     <div className={`relative inline-block ${className}`} style={{ width, height }}>
       <Image 
-        src="/PomoHub/logos/pomohub-logo-black.svg" 
+        src="/PomoHub/logos/pomohub-logo-white.svg" 
         alt="PomoHub" 
         fill
         priority
         className="dark:hidden object-contain object-left"
       />
       <Image 
-        src="/PomoHub/logos/pomohub-logo-white.svg" 
+        src="/PomoHub/logos/pomohub-logo-black.svg" 
         alt="PomoHub" 
         fill
         priority
