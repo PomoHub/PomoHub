@@ -2,6 +2,7 @@ import { X, Trash2, LogOut, AlertTriangle, Timer, Save } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useConfirm } from "@/components/providers/ConfirmProvider";
+import { PomodoroSettings } from "@/hooks/usePomodoro";
 
 interface SpaceSettingsModalProps {
   isOpen: boolean;
@@ -10,6 +11,8 @@ interface SpaceSettingsModalProps {
   isOwner: boolean;
   onDeleteSpace: () => void;
   onLeaveSpace: () => void;
+  pomodoroSettings?: PomodoroSettings;
+  onUpdatePomodoroSettings?: (newSettings: PomodoroSettings) => void;
 }
 
 export function SpaceSettingsModal({
@@ -18,10 +21,26 @@ export function SpaceSettingsModal({
   spaceName,
   isOwner,
   onDeleteSpace,
-  onLeaveSpace
+  onLeaveSpace,
+  pomodoroSettings,
+  onUpdatePomodoroSettings
 }: SpaceSettingsModalProps) {
   const { confirm } = useConfirm();
-  // ... existing state if any ...
+  const [settings, setSettings] = useState<PomodoroSettings>(pomodoroSettings || {
+    workDuration: 25,
+    shortBreakDuration: 5,
+    longBreakDuration: 15,
+    longBreakInterval: 4,
+    autoStartBreaks: false,
+    autoStartPomodoros: false
+  });
+
+  const handleSaveSettings = () => {
+    if (onUpdatePomodoroSettings) {
+      onUpdatePomodoroSettings(settings);
+      onClose();
+    }
+  };
   return (
     <AnimatePresence>
       {isOpen && (

@@ -38,7 +38,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "2").toInt()
-        versionName = tauriProperties.getProperty("tauri.android.versionName", "0.1.3")
+        versionName = tauriProperties.getProperty("tauri.android.versionName", "0.2.0")
     }
     buildTypes {
         getByName("debug") {

@@ -1,4 +1,4 @@
-import { MessageSquare, Users, Search, UserPlus, Newspaper, Loader2 } from "lucide-react";
+import { Users, Search, Loader2, Newspaper, UserPlus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { api } from "@/services/api";
 import { format } from "date-fns";
@@ -58,7 +58,7 @@ export function MobileSocialView() {
 
   const handleAddFriend = async (userId: string) => {
     try {
-      await api.post(`/friends/request/${userId}`);
+      await api.post(`/friends/request/${userId}`, {});
       alert("Friend request sent!");
     } catch (error) {
       alert("Failed to send request.");

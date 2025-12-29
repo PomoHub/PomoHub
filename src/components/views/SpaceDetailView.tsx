@@ -3,10 +3,7 @@ import { useAppStore } from "@/store";
 import { useAuthStore } from "@/store/auth";
 import { api, WS_URL } from "@/services/api";
 import { 
-  Send, 
-  Users, 
-  ArrowLeft,
-  Smartphone
+  Send
 } from "lucide-react";
 import { cn, isMobile } from "@/lib/utils";
 import { DraggableWidget } from "@/components/features/DraggableWidget";
@@ -81,12 +78,14 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
   const [notesContent, setNotesContent] = useState(""); // Simple local notes for now
 
   const pomodoro = usePomodoro({
-    workDuration: 25,
-    shortBreakDuration: 5,
-    longBreakDuration: 15,
-    longBreakInterval: 4,
-    autoStartBreaks: false,
-    autoStartPomodoros: false,
+    initialSettings: {
+      workDuration: 25,
+      shortBreakDuration: 5,
+      longBreakDuration: 15,
+      longBreakInterval: 4,
+      autoStartBreaks: false,
+      autoStartPomodoros: false,
+    }
   });
 
   // Sync Space Settings to Pomodoro Hook
@@ -447,7 +446,9 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
                 workDuration: space?.pomodoro_work_duration || 25,
                 shortBreakDuration: space?.pomodoro_short_break_duration || 5,
                 longBreakDuration: space?.pomodoro_long_break_duration || 15,
-                longBreakInterval: space?.pomodoro_rounds || 4
+                longBreakInterval: space?.pomodoro_rounds || 4,
+                autoStartBreaks: false,
+                autoStartPomodoros: false
             }}
             onUpdatePomodoroSettings={handlePomodoroSettingsChange}
         />

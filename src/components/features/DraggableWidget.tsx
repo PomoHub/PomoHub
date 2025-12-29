@@ -1,12 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { motion, useDragControls } from "framer-motion";
 import { 
   X, 
-  MessageSquare, 
-  Timer, 
   Minus, 
-  Maximize2, 
-  GripHorizontal 
+  Maximize2 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 

@@ -1,6 +1,6 @@
 [package]
 name = "pomohub"
-version = "0.1.4"
+version = "0.2.0"
 description = "PomoHub - A Pomodoro and Habit Tracker App"
 authors = ["you"]
 edition = "2021"
