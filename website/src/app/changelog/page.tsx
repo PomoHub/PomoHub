@@ -38,13 +38,51 @@ export default function Changelog() {
         </div>
 
         <div className="space-y-12">
-          {/* v0.1.4 */}
+          {/* v0.2.0 */}
           <div className="relative pl-8 border-l border-zinc-200 dark:border-zinc-800">
             <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-900 dark:bg-zinc-100 border-2 border-white dark:border-zinc-950 ring-4 ring-zinc-50 dark:ring-zinc-950"></div>
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold">v0.1.4</h2>
+                <h2 className="text-2xl font-bold">v0.2.0</h2>
                 <span className="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">Latest</span>
+                <span className="text-zinc-400 dark:text-zinc-500 text-sm">December 29, 2025</span>
+              </div>
+              <p className="text-zinc-600 dark:text-zinc-400">
+                The Social Update! Focus together with Spaces, Chat, and Friends.
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">✨ New Features</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Social Spaces:</strong> Create private rooms, invite friends via code, and see their focus status in real-time.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Real-time Chat:</strong> Stay connected with your study buddies directly within your Space.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Friend System:</strong> Add friends, view their profiles, and see their recent activity in your feed.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Cloud Sync:</strong> Seamlessly sync your habits, tasks, and sessions across Desktop and Mobile devices.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* v0.1.4 */}
+          <div className="relative pl-8 border-l border-zinc-200 dark:border-zinc-800">
+            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 dark:bg-zinc-600 border-2 border-white dark:border-zinc-950"></div>
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-2xl font-bold">v0.1.4</h2>
                 <span className="text-zinc-400 dark:text-zinc-500 text-sm">December 29, 2025</span>
               </div>
               <p className="text-zinc-600 dark:text-zinc-400">

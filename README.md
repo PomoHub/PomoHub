@@ -95,6 +95,11 @@ A modern, all-in-one productivity application built with **Tauri**, **React**, a
 - **Fix:** Desktop Notification Spam (Optimized notification frequency).
 
 ### v0.2.0 (Planned)
+- [x] **Social Spaces:** Create private rooms, invite friends via code, and focus together.
+- [x] **Real-time Chat:** Chat with friends in your space.
+- [x] **Friend System:** Add friends, block users, and see what they are up to.
+- [x] **Cloud Sync:** Sync data across Desktop and Mobile (Android).
+- [x] **Mobile Support:** Fully responsive mobile layout (Spaces requires landscape).
 - [ ] **Habit Streaks:** Detailed streak counters and statistics.
 - [ ] **Data Export/Import:** Backup your data to JSON/CSV.
 - [ ] **Keyboard Shortcuts:** Global hotkeys for timer control.

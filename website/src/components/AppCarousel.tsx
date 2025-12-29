@@ -6,13 +6,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const images = [
-  { src: "/main page.jpg", alt: "Main Dashboard - Overview of your day" },
-  { src: "/pomodoro page.jpg", alt: "Pomodoro Timer - Focus with customizable intervals" },
-  { src: "/habits page.jpg", alt: "Habit Tracker - Build streaks and consistency" },
-  { src: "/calender page.jpg", alt: "Calendar - Visualize your productivity history" },
-  { src: "/todo page.jpg", alt: "Todo List - Manage your tasks efficiently" },
-  { src: "/goals page.jpg", alt: "Goals - Track long-term progress" },
-  { src: "/settings page.jpg", alt: "Settings - Customize theme and background" },
+  { src: "/main-page.jpg", alt: "Main Dashboard - Overview of your day" },
+  { src: "/pomodoro-page.jpg", alt: "Pomodoro Timer - Focus with customizable intervals" },
+  { src: "/habits-page.jpg", alt: "Habit Tracker - Build streaks and consistency" },
+  { src: "/calender-page.jpg", alt: "Calendar - Visualize your productivity history" },
+  { src: "/todo-page.jpg", alt: "Todo List - Manage your tasks efficiently" },
+  { src: "/goals-page.jpg", alt: "Goals - Track long-term progress" },
+  { src: "/settings-page.jpg", alt: "Settings - Customize theme and background" },
 ];
 
 export function AppCarousel() {

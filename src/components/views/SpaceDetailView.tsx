@@ -4,11 +4,14 @@ import { api, WS_URL } from "@/services/api";
 import { 
   Send, 
   Users, 
-  ArrowLeft
+  ArrowLeft,
+  Smartphone
 } from "lucide-react";
 import { cn, isMobile } from "@/lib/utils";
 import { DraggableWidget } from "@/components/features/DraggableWidget";
 import { SpaceIsland } from "@/components/features/SpaceIsland";
+import { SpaceMembersModal } from "@/components/features/spaces/SpaceMembersModal";
+import { SpaceSettingsModal } from "@/components/features/spaces/SpaceSettingsModal";
 import { MessageSquare, Timer } from "lucide-react";
 
 interface Message {
@@ -22,6 +25,22 @@ interface Message {
   };
 }
 
+interface SpaceMember {
+  user_id: string;
+  role: 'admin' | 'member';
+  user: {
+    username: string;
+    avatar_url?: string;
+  }
+}
+
+interface Space {
+  id: string;
+  name: string;
+  owner_id: string;
+  members: SpaceMember[];
+}
+
 interface SpaceDetailViewProps {
   spaceId: string;
   onBack: () => void;
@@ -31,12 +50,54 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
   const { user, token } = useAuthStore();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [space, setSpace] = useState<Space | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isMobileDevice = isMobile();
+  const [isLandscape, setIsLandscape] = useState(true);
+
+  // Modal States
+  const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
   // Widget States (Desktop)
   const [showChat, setShowChat] = useState(true);
   const [showTimer, setShowTimer] = useState(true);
+
+  // Mobile Landscape Check
+  useEffect(() => {
+    if (!isMobileDevice) return;
+
+    const checkOrientation = () => {
+      // Simple check: width > height implies landscape-ish or at least wide enough
+      if (window.screen.orientation) {
+        setIsLandscape(window.screen.orientation.type.includes('landscape'));
+      } else {
+        setIsLandscape(window.innerWidth > window.innerHeight);
+      }
+    };
+
+    checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+
+    return () => {
+      window.removeEventListener('resize', checkOrientation);
+      window.removeEventListener('orientationchange', checkOrientation);
+    };
+  }, [isMobileDevice]);
+
+  // Fetch Space Details
+  useEffect(() => {
+    const fetchSpace = async () => {
+      try {
+        const data = await api.get(`/spaces/${spaceId}`);
+        setSpace(data);
+      } catch (error) {
+        console.error("Failed to fetch space details:", error);
+      }
+    };
+    fetchSpace();
+  }, [spaceId]);
 
   // Fetch initial messages
   useEffect(() => {
@@ -93,104 +154,75 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
     }
   };
 
-  // --- Mobile Layout ---
-  if (isMobileDevice) {
+  const handleRemoveMember = async (userId: string) => {
+    try {
+      await api.delete(`/spaces/${spaceId}/members/${userId}`);
+      // Refresh space details to update list
+      const data = await api.get(`/spaces/${spaceId}`);
+      setSpace(data);
+    } catch (error) {
+      console.error("Failed to remove member:", error);
+      alert("Failed to remove member");
+    }
+  };
+
+  const handleLeaveSpace = async () => {
+    if (!user) return;
+    try {
+      await api.delete(`/spaces/${spaceId}/members/${user.id}`);
+      onBack(); // Go back to dashboard
+    } catch (error) {
+      console.error("Failed to leave space:", error);
+      alert("Failed to leave space");
+    }
+  };
+
+  const handleDeleteSpace = async () => {
+    try {
+      await api.delete(`/spaces/${spaceId}`);
+      onBack(); // Go back to dashboard
+    } catch (error) {
+      console.error("Failed to delete space:", error);
+      alert("Failed to delete space");
+    }
+  };
+
+  // --- Mobile Landscape Enforcer ---
+  if (isMobileDevice && !isLandscape) {
     return (
-        <div className="flex flex-col h-full bg-zinc-50 dark:bg-black relative">
-          {/* Header */}
-          <header className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-10 safe-area-pt">
-            <button 
-              onClick={onBack}
-              className="p-2 -ml-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            >
-              <ArrowLeft size={24} className="text-zinc-600 dark:text-zinc-300" />
-            </button>
-            <div className="flex flex-col items-center">
-              <h1 className="font-bold text-zinc-900 dark:text-zinc-100">Space Chat</h1>
-              <span className="text-xs text-zinc-500 flex items-center gap-1">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                Online
-              </span>
-            </div>
-            <button className="p-2 -mr-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
-              <Users size={24} className="text-zinc-600 dark:text-zinc-300" />
-            </button>
-          </header>
-    
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((msg, index) => {
-              const isMe = msg.sender_id === user?.id;
-              const showAvatar = index === 0 || messages[index - 1].sender_id !== msg.sender_id;
-    
-              return (
-                <div 
-                  key={msg.id || index} 
-                  className={cn("flex gap-3", isMe ? "flex-row-reverse" : "flex-row")}
-                >
-                  {/* Avatar */}
-              <div className={cn("w-8 h-8 shrink-0 flex items-end", !showAvatar && "opacity-0")}>
-                <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                  {msg.sender.username[0].toUpperCase()}
-                </div>
-              </div>
-    
-                  {/* Bubble */}
-                  <div className={cn(
-                    "max-w-[75%] p-3 rounded-2xl text-sm shadow-sm",
-                    isMe 
-                      ? "bg-indigo-600 text-white rounded-br-none" 
-                      : "bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-100 dark:border-zinc-700 rounded-bl-none"
-                  )}>
-                    {showAvatar && !isMe && (
-                      <p className="text-xs font-bold text-indigo-500 mb-1">{msg.sender.username}</p>
-                    )}
-                    <p className="leading-relaxed">{msg.content}</p>
-                    <span className={cn(
-                      "text-[10px] block text-right mt-1 opacity-70",
-                      isMe ? "text-indigo-100" : "text-zinc-400"
-                    )}>
-                      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-            <div ref={messagesEndRef} />
-          </div>
-    
-          {/* Input Area */}
-          <div className="p-4 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 safe-area-pb">
-            <form onSubmit={handleSendMessage} className="flex gap-2">
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..."
-                className="flex-1 bg-zinc-100 dark:bg-zinc-800 border-none rounded-full px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none text-zinc-900 dark:text-zinc-100 placeholder-zinc-400"
-              />
-              <button 
-                type="submit"
-                className="p-3 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors shrink-0"
-              >
-                <Send size={20} />
-              </button>
-            </form>
-          </div>
+      <div className="flex flex-col items-center justify-center h-full bg-zinc-950 text-white p-8 text-center space-y-6">
+        <div className="relative w-32 h-32">
+           <div className="absolute inset-0 border-4 border-zinc-700 rounded-2xl animate-[spin_3s_linear_infinite]"></div>
+           <Smartphone className="absolute inset-0 m-auto text-zinc-500 animate-[pulse_2s_ease-in-out_infinite]" size={48} />
         </div>
-      );
+        <div>
+          <h2 className="text-2xl font-bold mb-2">Please Rotate Your Device</h2>
+          <p className="text-zinc-400">
+            Social Spaces require a landscape view for the best experience.
+          </p>
+        </div>
+      </div>
+    );
   }
 
-  // --- Desktop Layout ---
+  // --- Mobile Layout (Landscape) ---
+  if (isMobileDevice) {
+    // Reuse Desktop Layout for Mobile Landscape but maybe scaled or adjusted
+    // Actually, user asked to "apply desktop spaces page to mobile". 
+    // So we will use the "Desktop Layout" code block below for both, 
+    // but maybe tweak styles if needed.
+  }
+
+  // --- Universal Layout (Desktop + Mobile Landscape) ---
   return (
     <div className="relative h-full w-full bg-zinc-100 dark:bg-black/50 overflow-hidden">
         {/* Dynamic Island Bar */}
         <SpaceIsland 
-            spaceName="Focus Room" 
-            memberCount={3} 
+            spaceName={space?.name || "Loading..."} 
+            memberCount={space?.members?.length || 0} 
             onLeave={onBack}
-            onToggleMembers={() => {}}
-            onToggleSettings={() => {}}
+            onToggleMembers={() => setIsMembersModalOpen(true)}
+            onToggleSettings={() => setIsSettingsModalOpen(true)}
         />
 
         {/* Widgets Container */}
@@ -266,6 +298,25 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
                 </button>
             )}
         </div>
+
+        {/* Modals */}
+        <SpaceMembersModal 
+            isOpen={isMembersModalOpen}
+            onClose={() => setIsMembersModalOpen(false)}
+            members={space?.members || []}
+            currentUserId={user?.id || ""}
+            isOwner={space?.owner_id === user?.id}
+            onRemoveMember={handleRemoveMember}
+        />
+
+        <SpaceSettingsModal 
+            isOpen={isSettingsModalOpen}
+            onClose={() => setIsSettingsModalOpen(false)}
+            spaceName={space?.name || ""}
+            isOwner={space?.owner_id === user?.id}
+            onDeleteSpace={handleDeleteSpace}
+            onLeaveSpace={handleLeaveSpace}
+        />
     </div>
   );
 }
