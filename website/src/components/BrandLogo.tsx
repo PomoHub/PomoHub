@@ -12,16 +12,20 @@ export function BrandLogo({ width = 150, height = 40, className = "" }: BrandLog
       <Image 
         src="/logos/pomohub-logo-white.svg" 
         alt="PomoHub" 
-        fill
+        width={width}
+        height={height}
         priority
         className="dark:hidden object-contain object-left"
+        style={{ width: '100%', height: '100%' }}
       />
       <Image 
         src="/logos/pomohub-logo-black.svg" 
         alt="PomoHub" 
-        fill
+        width={width}
+        height={height}
         priority
         className="hidden dark:block object-contain object-left"
+        style={{ width: '100%', height: '100%' }}
       />
     </div>
   )

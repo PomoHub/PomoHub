@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useAppStore } from "@/store";
 import { useAuthStore } from "@/store/auth";
 import { api, WS_URL } from "@/services/api";
 import { 
@@ -12,7 +13,9 @@ import { DraggableWidget } from "@/components/features/DraggableWidget";
 import { SpaceIsland } from "@/components/features/SpaceIsland";
 import { SpaceMembersModal } from "@/components/features/spaces/SpaceMembersModal";
 import { SpaceSettingsModal } from "@/components/features/spaces/SpaceSettingsModal";
-import { MessageSquare, Timer } from "lucide-react";
+import { Pomodoro } from "@/components/features/Pomodoro";
+import { MessageSquare, Timer, StickyNote } from "lucide-react";
+import { PomodoroSettings } from "@/hooks/usePomodoro";
 
 interface Message {
   id: string;
@@ -39,6 +42,10 @@ interface Space {
   name: string;
   owner_id: string;
   members: SpaceMember[];
+  pomodoro_work_duration?: number;
+  pomodoro_short_break_duration?: number;
+  pomodoro_long_break_duration?: number;
+  pomodoro_rounds?: number;
 }
 
 interface SpaceDetailViewProps {
@@ -48,12 +55,21 @@ interface SpaceDetailViewProps {
 
 export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
   const { user, token } = useAuthStore();
+  const { setIsSpaceDetailOpen } = useAppStore();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [space, setSpace] = useState<Space | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const isMobileDevice = isMobile();
   const [isLandscape, setIsLandscape] = useState(true);
+
+  // Manage Nav Bar visibility
+  useEffect(() => {
+    if (isMobileDevice) {
+        setIsSpaceDetailOpen(true);
+        return () => setIsSpaceDetailOpen(false);
+    }
+  }, [isMobileDevice, setIsSpaceDetailOpen]);
 
   // Modal States
   const [isMembersModalOpen, setIsMembersModalOpen] = useState(false);
@@ -62,6 +78,8 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
   // Widget States (Desktop)
   const [showChat, setShowChat] = useState(true);
   const [showTimer, setShowTimer] = useState(true);
+  const [showNotes, setShowNotes] = useState(true);
+  const [notesContent, setNotesContent] = useState(""); // Simple local notes for now
 
   // Mobile Landscape Check
   useEffect(() => {
@@ -187,6 +205,28 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
     }
   };
 
+  const handlePomodoroSettingsChange = async (newSettings: PomodoroSettings) => {
+    if (!space) return;
+    try {
+        await api.put(`/spaces/${space.id}`, {
+            pomodoro_work_duration: newSettings.workDuration,
+            pomodoro_short_break_duration: newSettings.shortBreakDuration,
+            pomodoro_long_break_duration: newSettings.longBreakDuration,
+            pomodoro_rounds: newSettings.longBreakInterval
+        });
+        // Optimistic update
+        setSpace(prev => prev ? ({
+            ...prev,
+            pomodoro_work_duration: newSettings.workDuration,
+            pomodoro_short_break_duration: newSettings.shortBreakDuration,
+            pomodoro_long_break_duration: newSettings.longBreakDuration,
+            pomodoro_rounds: newSettings.longBreakInterval
+        }) : null);
+    } catch (e) {
+        console.error("Failed to update space settings:", e);
+    }
+  };
+
   // --- Mobile Landscape Enforcer ---
   if (isMobileDevice && !isLandscape) {
     return (
@@ -234,6 +274,7 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
                     icon={MessageSquare} 
                     initialPosition={{ x: 50, y: 100 }}
                     onClose={() => setShowChat(false)}
+                    className={cn(isMobileDevice ? "w-60 h-64" : "w-80 h-96")}
                 >
                     <div className="flex-1 flex flex-col h-full overflow-hidden">
                         <div className="flex-1 overflow-y-auto p-3 space-y-3">
@@ -269,24 +310,58 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
                 </DraggableWidget>
             )}
 
-            {/* Pomodoro Widget (Placeholder for now, or could duplicate logic) */}
-            {showTimer && (
+            {/* Pomodoro Timer Widget */}
+            {showTimer && space && (
                 <DraggableWidget
-                    title="Pomodoro Log"
+                    title="Focus Timer"
                     icon={Timer}
-                    initialPosition={{ x: 400, y: 100 }}
+                    initialPosition={{ x: isMobileDevice ? 320 : 400, y: 100 }}
                     onClose={() => setShowTimer(false)}
+                    className={cn(isMobileDevice ? "w-64 h-auto" : "w-96 h-auto")}
                 >
-                    <div className="p-4 flex flex-col items-center justify-center h-full text-zinc-500">
-                        <p className="text-sm">Timer controls are in the top bar.</p>
-                        <p className="text-xs mt-2">Use this widget for logs/stats later.</p>
+                    <div className="p-4">
+                        <Pomodoro 
+                            spaceId={spaceId}
+                            initialSettings={{
+                                workDuration: space.pomodoro_work_duration || 25,
+                                shortBreakDuration: space.pomodoro_short_break_duration || 5,
+                                longBreakDuration: space.pomodoro_long_break_duration || 15,
+                                longBreakInterval: space.pomodoro_rounds || 4,
+                                autoStartBreaks: false,
+                                autoStartPomodoros: false
+                            }}
+                            onSettingsChange={handlePomodoroSettingsChange}
+                        />
                     </div>
+                </DraggableWidget>
+            )}
+
+            {/* Notes Widget */}
+            {showNotes && (
+                <DraggableWidget
+                    title="Space Notes"
+                    icon={StickyNote}
+                    initialPosition={{ x: isMobileDevice ? 50 : 750, y: 100 }}
+                    onClose={() => setShowNotes(false)}
+                    className={cn(isMobileDevice ? "w-60 h-48" : "w-80 h-80")}
+                >
+                    <textarea 
+                        className="w-full h-full p-4 bg-transparent resize-none focus:outline-none text-zinc-700 dark:text-zinc-300 text-sm"
+                        placeholder="Shared notes..."
+                        value={notesContent}
+                        onChange={(e) => setNotesContent(e.target.value)}
+                    />
                 </DraggableWidget>
             )}
         </div>
 
         {/* Floating Toggle Buttons (if widgets closed) */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className={cn(
+            "absolute flex gap-2 z-40",
+            isMobileDevice 
+                ? "left-4 top-1/2 -translate-y-1/2 flex-col" 
+                : "bottom-6 left-1/2 -translate-x-1/2"
+        )}>
             {!showChat && (
                 <button onClick={() => setShowChat(true)} className="p-3 bg-white dark:bg-zinc-800 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700">
                     <MessageSquare size={20} />
@@ -295,6 +370,11 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
             {!showTimer && (
                 <button onClick={() => setShowTimer(true)} className="p-3 bg-white dark:bg-zinc-800 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700">
                     <Timer size={20} />
+                </button>
+            )}
+            {!showNotes && (
+                <button onClick={() => setShowNotes(true)} className="p-3 bg-white dark:bg-zinc-800 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700">
+                    <StickyNote size={20} />
                 </button>
             )}
         </div>

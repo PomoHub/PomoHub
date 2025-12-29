@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 type FeatureType = 'pomodoro' | 'habit' | 'calendar' | 'todo' | 'goals' | 'settings' | 'profile' | 'notes' | null;
 
-export type ViewType = 'dashboard' | 'pomodoro' | 'habits' | 'tasks' | 'calendar' | 'notes' | 'spaces' | 'settings' | 'profile';
+export type ViewType = 'dashboard' | 'pomodoro' | 'habits' | 'tasks' | 'calendar' | 'notes' | 'spaces' | 'settings' | 'profile' | 'social';
 
 interface AppState {
   currentView: ViewType;
@@ -20,6 +20,9 @@ interface AppState {
 
   notificationSound: string;
   setNotificationSound: (sound: string) => void;
+
+  isSpaceDetailOpen: boolean;
+  setIsSpaceDetailOpen: (isOpen: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -38,4 +41,7 @@ export const useAppStore = create<AppState>((set) => ({
 
   notificationSound: 'default',
   setNotificationSound: (sound) => set({ notificationSound: sound }),
+
+  isSpaceDetailOpen: false,
+  setIsSpaceDetailOpen: (isOpen) => set({ isSpaceDetailOpen: isOpen }),
 }));

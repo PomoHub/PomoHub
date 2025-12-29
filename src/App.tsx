@@ -18,6 +18,7 @@ import { NotesView } from "@/components/views/NotesView";
 import { SpacesView } from "@/components/views/SpacesView";
 import { SettingsView } from "@/components/views/SettingsView";
 import { ProfileView } from "@/components/views/ProfileView";
+import { MobileSocialView } from "@/components/views/MobileSocialView";
 
 // Features & Effects
 import { SeasonalSnowfall } from "@/components/features/SeasonalSnowfall";
@@ -67,6 +68,7 @@ function App() {
     // Mobile specific overrides
     if (isMobileDevice) {
         if (currentView === 'dashboard') return <MobileDashboard />;
+        if (currentView === 'social') return <MobileSocialView />;
     }
 
     switch (currentView) {

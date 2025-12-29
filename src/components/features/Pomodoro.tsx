@@ -1,9 +1,15 @@
-import { usePomodoro, type PomodoroMode } from "@/hooks/usePomodoro";
+import { usePomodoro, type PomodoroMode, type PomodoroSettings } from "@/hooks/usePomodoro";
 import { Play, Pause, RotateCcw, Settings2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
-export function Pomodoro() {
+interface PomodoroProps {
+  initialSettings?: PomodoroSettings;
+  onSettingsChange?: (settings: PomodoroSettings) => void;
+  spaceId?: string;
+}
+
+export function Pomodoro({ initialSettings, onSettingsChange, spaceId }: PomodoroProps = {}) {
   const { 
     mode, 
     timeLeft, 
@@ -13,7 +19,7 @@ export function Pomodoro() {
     resetTimer, 
     changeMode,
     updateSettings 
-  } = usePomodoro();
+  } = usePomodoro({ initialSettings, onSettingsChange, spaceId });
 
   const [showSettings, setShowSettings] = useState(false);
 

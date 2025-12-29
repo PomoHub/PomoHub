@@ -18,7 +18,7 @@ export type PomodoroMode = 'work' | 'shortBreak' | 'longBreak';
 
 const TIMER_NOTIFICATION_ID = 1001; // Constant ID for timer updates
 
-interface PomodoroSettings {
+export interface PomodoroSettings {
   workDuration: number; // in minutes
   shortBreakDuration: number;
   longBreakDuration: number;
@@ -36,11 +36,17 @@ const DEFAULT_SETTINGS: PomodoroSettings = {
   autoStartPomodoros: false,
 };
 
-export const usePomodoro = () => {
+interface UsePomodoroProps {
+  initialSettings?: PomodoroSettings;
+  spaceId?: string;
+  onSettingsChange?: (settings: PomodoroSettings) => void;
+}
+
+export const usePomodoro = (props?: UsePomodoroProps) => {
   const [mode, setMode] = useState<PomodoroMode>('work');
-  const [timeLeft, setTimeLeft] = useState(DEFAULT_SETTINGS.workDuration * 60);
+  const [timeLeft, setTimeLeft] = useState((props?.initialSettings?.workDuration || DEFAULT_SETTINGS.workDuration) * 60);
   const [isActive, setIsActive] = useState(false);
-  const [settings, setSettings] = useState<PomodoroSettings>(DEFAULT_SETTINGS);
+  const [settings, setSettings] = useState<PomodoroSettings>(props?.initialSettings || DEFAULT_SETTINGS);
   const [sessionsCompleted, setSessionsCompleted] = useState(0);
   
   // Ref for the end time of the current timer
@@ -49,7 +55,8 @@ export const usePomodoro = () => {
 
   // Restore state on mount
   useEffect(() => {
-    const saved = localStorage.getItem('pomodoro_state');
+    const storageKey = props?.spaceId ? `pomodoro_state_${props.spaceId}` : 'pomodoro_state';
+    const saved = localStorage.getItem(storageKey);
     if (saved) {
       try {
         const { mode: savedMode, endTime, isActive: savedIsActive, timeLeft: savedTimeLeft } = JSON.parse(saved);
@@ -75,18 +82,19 @@ export const usePomodoro = () => {
         console.error("Failed to restore state", e);
       }
     }
-  }, []);
+  }, [props?.spaceId]);
 
   // Save state when paused (including timeLeft updates like reset)
   useEffect(() => {
+    const storageKey = props?.spaceId ? `pomodoro_state_${props.spaceId}` : 'pomodoro_state';
     if (!isActive) {
-       localStorage.setItem('pomodoro_state', JSON.stringify({
+       localStorage.setItem(storageKey, JSON.stringify({
           mode,
           isActive: false,
           timeLeft
        }));
     }
-  }, [mode, isActive, timeLeft]);
+  }, [mode, isActive, timeLeft, props?.spaceId]);
 
   // Request notification permission on mount and setup channel
   useEffect(() => {
@@ -141,6 +149,10 @@ export const usePomodoro = () => {
 
   // Load settings from DB on mount
   useEffect(() => {
+    if (props?.initialSettings) {
+      setSettings(props.initialSettings);
+      return;
+    }
     const loadSettings = async () => {
       try {
         const db = await getDB();
@@ -157,7 +169,7 @@ export const usePomodoro = () => {
       }
     };
     loadSettings();
-  }, []);
+  }, [props?.initialSettings]);
 
   // Update timeLeft when mode or settings change (only if not active)
   useEffect(() => {
@@ -377,6 +389,11 @@ export const usePomodoro = () => {
     const updated = { ...settings, ...newSettings };
     setSettings(updated);
     
+    if (props?.onSettingsChange) {
+      props.onSettingsChange(updated);
+      return;
+    }
+
     // Save to DB
     try {
       const db = await getDB();
