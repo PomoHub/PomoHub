@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useAppStore } from "@/store";
 import { useAuthStore } from "@/store/auth";
 import { api, WS_URL } from "@/services/api";
@@ -77,15 +77,18 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
   const [showNotes, setShowNotes] = useState(true);
   const [notesContent, setNotesContent] = useState(""); // Simple local notes for now
 
+  const initialPomodoroSettings = useMemo(() => ({
+    workDuration: 25,
+    shortBreakDuration: 5,
+    longBreakDuration: 15,
+    longBreakInterval: 4,
+    autoStartBreaks: false,
+    autoStartPomodoros: false,
+  }), []);
+
   const pomodoro = usePomodoro({
-    initialSettings: {
-      workDuration: 25,
-      shortBreakDuration: 5,
-      longBreakDuration: 15,
-      longBreakInterval: 4,
-      autoStartBreaks: false,
-      autoStartPomodoros: false,
-    }
+    initialSettings: initialPomodoroSettings,
+    onSettingsChange: () => {} // Prevent local DB save
   });
 
   // Sync Space Settings to Pomodoro Hook
@@ -277,7 +280,7 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
                      <Pomodoro 
                           spaceId={spaceId}
                           externalState={pomodoro}
-                          onSettingsChange={handlePomodoroSettingsChange}
+                          onSettingsChange={space?.owner_id === user?.id ? handlePomodoroSettingsChange : undefined}
                       />
                  </div>
               )}

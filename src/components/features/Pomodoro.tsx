@@ -27,6 +27,14 @@ export function Pomodoro({ initialSettings, onSettingsChange, spaceId, externalS
 
   const [showSettings, setShowSettings] = useState(false);
 
+  const handleUpdateSettings = (updates: Partial<PomodoroSettings>) => {
+    const newSettings = { ...settings, ...updates };
+    updateSettings(updates);
+    if (onSettingsChange) {
+      onSettingsChange(newSettings);
+    }
+  };
+
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -117,16 +125,18 @@ export function Pomodoro({ initialSettings, onSettingsChange, spaceId, externalS
       </div>
 
       {/* Settings Toggle */}
-      <button
-        onClick={() => setShowSettings(!showSettings)}
-        className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
-      >
-        <Settings2 size={16} />
-        <span className="text-sm">Timer Settings</span>
-      </button>
+      {(!spaceId || onSettingsChange) && (
+        <button
+          onClick={() => setShowSettings(!showSettings)}
+          className="flex items-center gap-2 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200 transition-colors"
+        >
+          <Settings2 size={16} />
+          <span className="text-sm">Timer Settings</span>
+        </button>
+      )}
 
       {/* Settings Panel */}
-      {showSettings && (
+      {showSettings && (!spaceId || onSettingsChange) && (
         <div className="w-full mt-6 p-6 bg-zinc-50 dark:bg-zinc-900/50 rounded-2xl border border-zinc-100 dark:border-zinc-800 animate-in fade-in slide-in-from-top-4 space-y-4">
           <div className="grid grid-cols-3 gap-4">
             <div className="space-y-2">
@@ -134,7 +144,7 @@ export function Pomodoro({ initialSettings, onSettingsChange, spaceId, externalS
               <input
                 type="number"
                 value={settings.workDuration}
-                onChange={(e) => updateSettings({ workDuration: Number(e.target.value) })}
+                onChange={(e) => handleUpdateSettings({ workDuration: Number(e.target.value) })}
                 className="w-full p-2 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-center"
               />
             </div>
@@ -143,7 +153,7 @@ export function Pomodoro({ initialSettings, onSettingsChange, spaceId, externalS
               <input
                 type="number"
                 value={settings.shortBreakDuration}
-                onChange={(e) => updateSettings({ shortBreakDuration: Number(e.target.value) })}
+                onChange={(e) => handleUpdateSettings({ shortBreakDuration: Number(e.target.value) })}
                 className="w-full p-2 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-center"
               />
             </div>
@@ -152,7 +162,7 @@ export function Pomodoro({ initialSettings, onSettingsChange, spaceId, externalS
               <input
                 type="number"
                 value={settings.longBreakDuration}
-                onChange={(e) => updateSettings({ longBreakDuration: Number(e.target.value) })}
+                onChange={(e) => handleUpdateSettings({ longBreakDuration: Number(e.target.value) })}
                 className="w-full p-2 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-center"
               />
             </div>
@@ -165,7 +175,7 @@ export function Pomodoro({ initialSettings, onSettingsChange, spaceId, externalS
                 type="number"
                 min="1"
                 value={settings.longBreakInterval}
-                onChange={(e) => updateSettings({ longBreakInterval: Number(e.target.value) })}
+                onChange={(e) => handleUpdateSettings({ longBreakInterval: Number(e.target.value) })}
                 className="w-16 p-1.5 rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-center text-sm"
               />
             </div>
@@ -174,7 +184,7 @@ export function Pomodoro({ initialSettings, onSettingsChange, spaceId, externalS
               <input
                 type="checkbox"
                 checked={settings.autoStartBreaks}
-                onChange={(e) => updateSettings({ autoStartBreaks: e.target.checked })}
+                onChange={(e) => handleUpdateSettings({ autoStartBreaks: e.target.checked })}
                 className="w-5 h-5 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
               />
             </div>
@@ -183,7 +193,7 @@ export function Pomodoro({ initialSettings, onSettingsChange, spaceId, externalS
               <input
                 type="checkbox"
                 checked={settings.autoStartPomodoros}
-                onChange={(e) => updateSettings({ autoStartPomodoros: e.target.checked })}
+                onChange={(e) => handleUpdateSettings({ autoStartPomodoros: e.target.checked })}
                 className="w-5 h-5 rounded border-zinc-300 text-blue-600 focus:ring-blue-500"
               />
             </div>
