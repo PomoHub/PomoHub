@@ -70,12 +70,20 @@ A modern, all-in-one productivity application built with **Tauri**, **React**, a
 - **New:** Customizable Notification Sounds (Presets).
 - **New:** Android Support (Tauri Mobile initialized).
 
-### v0.1.3 (Current)
+### v0.1.3
 - **New:** Daily Task Reminders (Notifications).
 - **Improvement:** Reliable Background Timer (Timestamp-based logic).
 - **Improvement:** Native Notifications for Desktop & Android.
 - **Improvement:** Custom Notification Sounds (File selection).
 - **Fix:** Android background execution issues.
+
+### v0.1.4 (Current)
+- **New:** Desktop Window Title Timer (Visible countdown in title bar).
+- **New:** Note Taking System (Text, Drawings, Attachments).
+- **New:** Smart Macros (Create Todos/Tasks directly from notes with `@create-todo` syntax).
+- **Improvement:** Persistent Mobile Notifications (Lock screen timer updates).
+- **Improvement:** Notification Sound Reliability (Fallback beep mechanism).
+- **Fix:** Desktop Notification Spam (Optimized notification frequency).
 
 ### v0.2.0 (Planned)
 - [ ] **Habit Streaks:** Detailed streak counters and statistics.

@@ -3,9 +3,12 @@ import { getDB } from '@/lib/db';
 import { format } from 'date-fns';
 import { sendNotification, requestPermission, isPermissionGranted } from '@tauri-apps/plugin-notification';
 import { convertFileSrc } from '@tauri-apps/api/core';
+import { getCurrentWindow } from '@tauri-apps/api/window';
+import { isMobile } from '@/lib/utils';
 
 export type PomodoroMode = 'work' | 'shortBreak' | 'longBreak';
 
+const TIMER_NOTIFICATION_ID = 1001; // Constant ID for timer updates
 
 interface PomodoroSettings {
   workDuration: number; // in minutes
@@ -34,6 +37,7 @@ export const usePomodoro = () => {
   
   // Ref for the end time of the current timer
   const endTimeRef = useRef<number | null>(null);
+  const lastNotificationUpdateRef = useRef<number>(0);
 
   // Restore state on mount
   useEffect(() => {
@@ -158,7 +162,23 @@ export const usePomodoro = () => {
   }, []);
 
   const playNotificationSound = useCallback(async () => {
-    // Check if there is a custom sound in settings
+    const playBeep = () => {
+      try {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.5);
+      } catch (e) {
+        console.error("Failed to play beep", e);
+      }
+    };
+
     try {
         const db = await getDB();
         const result = await db.select(
@@ -169,20 +189,27 @@ export const usePomodoro = () => {
         let soundPath = '/notification.mp3';
         if (result.length > 0) {
              const stored = JSON.parse(result[0].value);
-             // Presets
-             if (stored === 'bell') soundPath = '/sounds/bell.mp3'; // Example mapping if we had files
-             else if (stored === 'digital') soundPath = '/sounds/digital.mp3';
-             else if (stored === 'nature') soundPath = '/sounds/nature.mp3';
-             else if (stored !== 'default') {
-                 // It's a custom path
-                 soundPath = convertFileSrc(stored);
+             if (stored && stored !== 'default') {
+                 // Check if it is a preset or file
+                 if (stored.startsWith('http') || stored.startsWith('asset')) {
+                    soundPath = stored;
+                 } else {
+                    soundPath = convertFileSrc(stored);
+                 }
              }
         }
+        
         const audio = new Audio(soundPath);
-        audio.play().catch(() => {});
+        audio.onerror = () => {
+             console.warn("Audio load failed, using fallback beep");
+             playBeep();
+        };
+        await audio.play().catch((e) => {
+            console.warn("Audio play failed, using fallback beep", e);
+            playBeep();
+        });
     } catch (e) {
-        const audio = new Audio('/notification.mp3');
-        audio.play().catch(() => {});
+        playBeep();
     }
   }, []);
 
@@ -198,6 +225,7 @@ export const usePomodoro = () => {
 
         // Send notification on start
         sendNotification({
+          id: TIMER_NOTIFICATION_ID,
           title: stateRef.current.mode === 'work' ? 'Focus Started 🍅' : 'Break Started ☕',
           body: `Timer set for ${Math.floor(timeLeft / 60)} minutes. Ends at ${endStr}.`,
           sound: 'default'
@@ -220,22 +248,42 @@ export const usePomodoro = () => {
         
         if (diff > 0) {
           setTimeLeft(diff);
-          // Optional: Update notification periodically? (Maybe every minute)
-          // Doing it every second is too heavy for JS -> Native bridge usually
+          
+          // Update Desktop Title
+          const mins = Math.floor(diff / 60);
+          const secs = diff % 60;
+          const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+          getCurrentWindow().setTitle(`${timeStr} - ${currentState.mode === 'work' ? 'Focus' : 'Break'} | PomoHub`);
+
+          // Update Mobile Notification (every 1 second)
+          // Only on mobile to avoid notification spam on desktop
+          if (isMobile() && now - lastNotificationUpdateRef.current > 1000) {
+             lastNotificationUpdateRef.current = now;
+             sendNotification({
+                id: TIMER_NOTIFICATION_ID,
+                title: currentState.mode === 'work' ? 'Focusing... 🍅' : 'On Break ☕',
+                body: `${timeStr} remaining`,
+                sound: undefined, // Silent update
+                silent: true // Try to make it silent if supported
+             });
+          }
+
         } else {
           // Timer finished
           if (timerRef.current) clearInterval(timerRef.current);
           setIsActive(false); 
           endTimeRef.current = null;
           setTimeLeft(0);
+          getCurrentWindow().setTitle('PomoHub');
           
-          // Play sound
+          // Play sound (JS)
           playNotificationSound();
           
-          // Send Notification
+          // Send Notification (Native) with Sound
           sendNotification({
             title: currentState.mode === 'work' ? 'Focus Session Complete! 🎉' : 'Break Over! 🚀',
             body: currentState.mode === 'work' ? 'Great job! Take a break.' : 'Time to get back to work!',
+            sound: 'default' // Ensure sound plays
           });
 
           const { mode, settings, sessionsCompleted } = currentState;

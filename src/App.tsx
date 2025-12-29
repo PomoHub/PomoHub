@@ -9,7 +9,8 @@ import {
   ListTodo, 
   Target, 
   Settings as SettingsIcon,
-  User
+  User,
+  StickyNote
 } from "lucide-react";
 
 import { Pomodoro } from "@/components/features/Pomodoro";
@@ -19,6 +20,7 @@ import { TodoList } from "@/components/features/TodoList";
 import { Goals } from "@/components/features/Goals";
 import { Settings } from "@/components/features/Settings";
 import { Profile } from "@/components/features/Profile";
+import { Notes } from "@/components/features/Notes";
 import { useSettings } from "@/hooks/useSettings";
 import { SeasonalSnowfall } from "@/components/features/SeasonalSnowfall";
 
@@ -58,6 +60,7 @@ function App() {
     { id: 'calendar', label: 'Calendar', icon: CalendarIcon, color: 'bg-blue-500' },
     { id: 'todo', label: 'Todos', icon: ListTodo, color: 'bg-orange-500' },
     { id: 'goals', label: 'Goals', icon: Target, color: 'bg-purple-500' },
+    { id: 'notes', label: 'Notes', icon: StickyNote, color: 'bg-yellow-500' },
     { id: 'profile', label: 'Profile', icon: User, color: 'bg-indigo-500' },
     { id: 'settings', label: 'Settings', icon: SettingsIcon, color: 'bg-zinc-500' },
   ] as const;
@@ -148,6 +151,15 @@ function App() {
         title="Goals"
       >
         <Goals />
+      </Modal>
+
+      <Modal 
+        isOpen={activeModal === 'notes'} 
+        onClose={closeModal} 
+        title="Notes & Sketches"
+        className="max-w-4xl"
+      >
+        <Notes />
       </Modal>
 
       <Modal 

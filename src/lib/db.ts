@@ -100,6 +100,18 @@ export const initDB = async () => {
         );
       `);
 
+      await db.execute(`
+        CREATE TABLE IF NOT EXISTS notes (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT NOT NULL,
+          content TEXT,
+          drawing TEXT,
+          attachments TEXT,
+          created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+          updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
+
       console.log("Database initialized successfully");
       dbInstance = db;
       return db;

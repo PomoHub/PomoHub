@@ -38,13 +38,65 @@ export default function Changelog() {
         </div>
 
         <div className="space-y-12">
-          {/* v0.1.3 */}
+          {/* v0.1.4 */}
           <div className="relative pl-8 border-l border-zinc-200 dark:border-zinc-800">
             <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-900 dark:bg-zinc-100 border-2 border-white dark:border-zinc-950 ring-4 ring-zinc-50 dark:ring-zinc-950"></div>
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold">v0.1.3</h2>
+                <h2 className="text-2xl font-bold">v0.1.4</h2>
                 <span className="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full">Latest</span>
+                <span className="text-zinc-400 dark:text-zinc-500 text-sm">December 29, 2025</span>
+              </div>
+              <p className="text-zinc-600 dark:text-zinc-400">
+                Major productivity boost with Notes, Macros, and better Notifications!
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">✨ New Features</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Notes & Sketches:</strong> Comprehensive note-taking with support for rich text, freehand drawings, and file attachments.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Smart Macros:</strong> Type <code>@create-todo[Buy Milk]</code> inside any note to instantly create a task without leaving the editor.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Window Title Timer:</strong> Track your focus time directly from the window title bar on Desktop.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 uppercase tracking-wider mb-3">🚀 Improvements</h3>
+                <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Mobile Lock Screen:</strong> Persistent silent notifications keep your timer visible on the lock screen (Android).</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Notification Sounds:</strong> Added a fallback mechanism to ensure notification sounds always play, even if files are missing.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-zinc-100 shrink-0"></span>
+                    <span><strong>Desktop Experience:</strong> Eliminated notification spam by optimizing update frequency for desktop environments.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* v0.1.3 */}
+          <div className="relative pl-8 border-l border-zinc-200 dark:border-zinc-800">
+            <div className="absolute -left-1.5 top-1.5 w-3 h-3 rounded-full bg-zinc-300 dark:bg-zinc-600 border-2 border-white dark:border-zinc-950"></div>
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-2xl font-bold">v0.1.3</h2>
                 <span className="text-zinc-400 dark:text-zinc-500 text-sm">December 25, 2025</span>
               </div>
               <p className="text-zinc-600 dark:text-zinc-400">
