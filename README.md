@@ -174,7 +174,7 @@
 Distributed under the MIT License. See `LICENSE` for more information.
 
 <div align="center">
-  <img src="website/public/logos/pomohub-app-logo.svg" alt="PomoHub Logo" width="300" height="80" />
+  <img src="website/public/logos/pomohub-logo-white.svg" alt="PomoHub Logo" width="300" height="80" />
 </div>
 
 <div align="center">
