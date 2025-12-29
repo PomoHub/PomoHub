@@ -15,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PomoHub - Focus & Achieve",
-  description: "A modern productivity app combining Pomodoro timer, habit tracking, and goal setting.",
+  title: "PomoHub - Social Productivity & Focus",
+  description: "The Social Update (v0.2.0) is here! Create Spaces, chat with friends, and track habits together. Available on Windows and Android.",
 };
 
 export default function RootLayout({

@@ -1,6 +1,8 @@
 import { useSettings } from "@/hooks/useSettings";
-import { Moon, Sun, Monitor, Image as ImageIcon, Trash2, Bell } from "lucide-react";
+import { Moon, Sun, Monitor, Image as ImageIcon, Trash2, Bell, User, Cloud, LogOut, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/store/auth";
+import { useAppStore } from "@/store";
 
 export function Settings() {
   const { 
@@ -14,6 +16,9 @@ export function Settings() {
     updateNotificationSound,
     selectNotificationSound
   } = useSettings();
+
+  const { user, logout } = useAuthStore();
+  const { setCurrentView } = useAppStore();
 
   const sounds = [
     { id: 'default', label: 'Default Beep' },
@@ -31,6 +36,48 @@ export function Settings() {
 
   return (
     <div className="w-full max-w-xl mx-auto space-y-8">
+      {/* Account Section */}
+      <section className="space-y-4">
+        <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Account</h3>
+        <div className="p-4 bg-white dark:bg-zinc-900 rounded-xl border border-zinc-200 dark:border-zinc-800">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+              {user?.avatar_url ? (
+                <img src={user.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <User size={24} className="text-zinc-400" />
+              )}
+            </div>
+            <div className="flex-1">
+              <h4 className="font-bold text-zinc-900 dark:text-zinc-100">
+                {user?.first_name ? `${user.first_name} ${user.last_name}` : user?.username}
+              </h4>
+              <p className="text-xs text-zinc-500">{user?.email}</p>
+            </div>
+            <button 
+              onClick={() => setCurrentView('profile')}
+              className="text-indigo-600 dark:text-indigo-400 text-sm font-medium flex items-center gap-1 hover:underline"
+            >
+              View Profile <ArrowRight size={14} />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-2 text-zinc-500">
+              <Cloud size={16} />
+              <span className="text-xs">Sync Status: <span className="text-green-500 font-medium">Online</span></span>
+            </div>
+            <button 
+              onClick={logout}
+              className="flex items-center gap-2 text-red-500 hover:text-red-600 text-sm font-medium transition-colors"
+            >
+              <LogOut size={16} />
+              Log Out
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Theme Section */}
       <section className="space-y-4">
         <h3 className="text-lg font-medium text-zinc-900 dark:text-zinc-100">Appearance</h3>
@@ -198,7 +245,7 @@ export function Settings() {
 
       <div className="pt-8 text-center">
         <p className="text-xs text-zinc-400">
-          PomoHub v0.1.4 • Built with Tauri & React
+          PomoHub v0.2.0 • Built with Tauri & React
         </p>
       </div>
     </div>

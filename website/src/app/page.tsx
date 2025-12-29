@@ -1,47 +1,50 @@
+"use client";
+
 import Link from "next/link";
-import { Timer, CheckSquare, Calendar, ListTodo, Target, Download, Github, Smartphone } from "lucide-react";
+import { Timer, CheckSquare, Download, Github, Smartphone, Users, Cloud, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AppCarousel } from "@/components/AppCarousel";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BrandLogo } from "@/components/BrandLogo";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const features = [
     {
+      title: "Social Spaces",
+      description: "Create private rooms, invite friends via code, and focus together with real-time status updates.",
+      icon: Users,
+      color: "bg-indigo-500",
+    },
+    {
+      title: "Real-time Chat",
+      description: "Chat with your study buddies directly within your Space. Share tips, motivation, and stay connected.",
+      icon: MessageCircle,
+      color: "bg-pink-500",
+    },
+    {
+      title: "Cloud Sync",
+      description: "Seamlessly sync your habits, tasks, and sessions across all your devices (Desktop & Mobile).",
+      icon: Cloud,
+      color: "bg-blue-500",
+    },
+    {
       title: "Pomodoro Timer",
-      description: "Customizable timer with work/break intervals and circular progress visualization.",
+      description: "Customizable timer with work/break intervals, silent notifications, and circular progress visualization.",
       icon: Timer,
       color: "bg-red-500",
     },
     {
       title: "Habit Tracker",
-      description: "Track daily habits with streak monitoring and custom color coding.",
+      description: "Track daily habits with streak monitoring, heatmaps, and custom color coding.",
       icon: CheckSquare,
       color: "bg-green-500",
     },
     {
-      title: "Calendar & Stats",
-      description: "Monthly overview of your productivity with daily insights and activity logs.",
-      icon: Calendar,
-      color: "bg-blue-500",
-    },
-    {
-      title: "Task Management",
-      description: "Simple yet powerful todo list with due dates, priority sorting, and daily reminders.",
-      icon: ListTodo,
-      color: "bg-orange-500",
-    },
-    {
-      title: "Long-term Goals",
-      description: "Set and track progress towards your big life goals.",
-      icon: Target,
-      color: "bg-purple-500",
-    },
-    {
       title: "Mobile Support",
-      description: "Take your productivity on the go with our new Android application.",
+      description: "Take your productivity on the go with our new Android application. Stay synced everywhere.",
       icon: Smartphone,
-      color: "bg-indigo-500",
+      color: "bg-purple-500",
     },
   ];
 
@@ -76,23 +79,44 @@ export default function Home() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4">
         <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm font-medium text-zinc-600 dark:text-zinc-300 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 text-sm font-medium text-indigo-700 dark:text-indigo-300"
+          >
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
             </span>
-            v0.1.4 Released
-          </div>
+            v0.2.0 - The Social Update
+          </motion.div>
           
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-linear-to-b from-zinc-900 to-zinc-600 dark:from-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-8 duration-700">
-            Master Your Focus.<br />Build Better Habits.
-          </h1>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="text-5xl md:text-7xl font-bold tracking-tight bg-linear-to-b from-zinc-900 to-zinc-600 dark:from-zinc-100 dark:to-zinc-400 bg-clip-text text-transparent"
+          >
+            Productivity is Better<br />Together.
+          </motion.h1>
           
-          <p className="text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-700 delay-100">
-            A beautiful, privacy-focused app that combines Pomodoro timer, habit tracking, and goal setting into one seamless experience. Now available on Windows & Android.
-          </p>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto"
+          >
+            Join <strong>Spaces</strong>, chat with friends, and track habits together. 
+            Experience the new social way to focus with PomoHub v0.2.0.
+          </motion.p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-16 duration-700 delay-200">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+          >
             <Link
               href="https://github.com/PomoHub/PomoHub/releases/latest"
               target="_blank"
@@ -109,27 +133,119 @@ export default function Home() {
               <Smartphone size={20} />
               Get Android APK
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* App Preview */}
       <section className="px-4 pb-32">
-        <AppCarousel />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+        >
+          <AppCarousel />
+        </motion.div>
+      </section>
+
+      {/* Social Features Highlight */}
+      <section className="py-24 bg-indigo-50 dark:bg-indigo-950/20 border-y border-indigo-100 dark:border-indigo-900/50">
+         <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row items-center gap-12">
+            <div className="flex-1 space-y-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 text-sm font-semibold">
+                <Users size={16} />
+                New in v0.2.0
+              </div>
+              <h2 className="text-4xl font-bold text-zinc-900 dark:text-zinc-50">Introducing Spaces</h2>
+              <p className="text-lg text-zinc-600 dark:text-zinc-400">
+                Productivity doesn&apos;t have to be lonely. Create a Space, invite your friends, and see their focus status in real-time.
+              </p>
+              <ul className="space-y-4">
+                {[
+                  "Create private rooms for study groups or work teams",
+                  "Real-time status updates (Focusing, Break, Idle)",
+                  "Built-in chat to share resources and motivation",
+                  "See who is online and what they are working on"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-zinc-700 dark:text-zinc-300">
+                    <div className="h-6 w-6 rounded-full bg-indigo-500 flex items-center justify-center text-white shrink-0">
+                      <CheckSquare size={14} />
+                    </div>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="flex-1 w-full max-w-md bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 p-6 rotate-3 hover:rotate-0 transition-transform duration-500">
+               {/* Mock UI for Space */}
+               <div className="space-y-4">
+                  <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
+                        DS
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-zinc-900 dark:text-zinc-100">Deep Work Squad</h3>
+                        <p className="text-xs text-green-500 flex items-center gap-1">
+                          <span className="block h-2 w-2 rounded-full bg-green-500"></span>
+                          3 Online
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      <div className="h-8 w-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs">A</div>
+                      <div className="flex-1">
+                        <div className="flex justify-between">
+                          <span className="font-medium text-sm">Alex</span>
+                          <span className="text-xs text-zinc-400">Focusing (15:00)</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-zinc-200 dark:bg-zinc-700 rounded-full mt-1.5 overflow-hidden">
+                           <div className="h-full bg-indigo-500 w-3/4"></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      <div className="h-8 w-8 rounded-full bg-pink-500 flex items-center justify-center text-white text-xs">S</div>
+                      <div className="flex-1">
+                        <div className="flex justify-between">
+                          <span className="font-medium text-sm">Sarah</span>
+                          <span className="text-xs text-zinc-400">Break (04:20)</span>
+                        </div>
+                         <div className="h-1.5 w-full bg-zinc-200 dark:bg-zinc-700 rounded-full mt-1.5 overflow-hidden">
+                           <div className="h-full bg-green-500 w-1/4"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-2">
+                     <div className="bg-zinc-100 dark:bg-zinc-800 rounded-lg p-3 text-sm text-zinc-600 dark:text-zinc-400">
+                        <span className="font-bold text-indigo-600 dark:text-indigo-400">Alex:</span> Let&apos;s go for another 25m round! 🚀
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
       </section>
 
       {/* Features Grid */}
       <section id="features" className="py-24 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Everything you need to stay productive</h2>
-            <p className="text-lg text-zinc-600 dark:text-zinc-400">No subscriptions, no accounts, just pure focus.</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">Everything You Need</h2>
+            <p className="text-lg text-zinc-600 dark:text-zinc-400">A complete productivity suite, now supercharged with social features.</p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, idx) => (
-              <div 
+              <motion.div 
                 key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
                 className="group p-8 rounded-3xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 hover:border-zinc-200 dark:hover:border-zinc-600 hover:shadow-lg transition-all duration-300"
               >
                 <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center text-white mb-6 shadow-sm", feature.color)}>
@@ -139,7 +255,7 @@ export default function Home() {
                 <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
                   {feature.description}
                 </p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

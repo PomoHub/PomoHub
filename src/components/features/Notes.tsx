@@ -161,7 +161,7 @@ export function Notes() {
   }
 
   return (
-    <div className="w-full h-[600px] flex gap-4">
+    <div className="w-full h-150 flex gap-4">
       {/* Sidebar: Note List */}
       <div className="w-1/3 flex flex-col gap-4 border-r border-zinc-200 dark:border-zinc-800 pr-4">
         <button
@@ -301,7 +301,7 @@ export function Notes() {
                    {/* Canvas Wrapper for Infinite Scroll Effect (Simple Overflow) */}
                    <div className={cn("w-full h-full overflow-auto", isPanMode ? "cursor-grab active:cursor-grabbing" : "cursor-crosshair")}>
                      {/* Large Canvas Area */}
-                     <div className="w-[2000px] h-[2000px] bg-white relative">
+                     <div className="w-500 h-500 bg-white relative">
                         {/* Pointer Events Control: Disable canvas interactions when in Pan Mode */}
                         <div className={cn("w-full h-full", isPanMode ? "pointer-events-none" : "")}>
                             <ReactSketchCanvas
@@ -333,7 +333,7 @@ export function Notes() {
             <div className="p-3 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-200 dark:border-zinc-800">
               <div className="flex flex-wrap gap-2 mb-2">
                 {attachments.map((path, idx) => (
-                  <div key={idx} className="flex items-center gap-1 px-2 py-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md text-xs max-w-[200px]">
+                  <div key={idx} className="flex items-center gap-1 px-2 py-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md text-xs max-w-50">
                     <Paperclip size={12} className="shrink-0" />
                     <span className="truncate flex-1">{path.split(/[/\\]/).pop()}</span>
                     
@@ -370,7 +370,7 @@ export function Notes() {
 
       {/* File Preview Modal */}
       {previewFile && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm p-8">
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/80 backdrop-blur-sm p-8">
              <div className="relative w-full h-full max-w-5xl bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden flex flex-col">
                 <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-800">
                     <h3 className="font-medium truncate">{previewFile.split(/[/\\]/).pop()}</h3>

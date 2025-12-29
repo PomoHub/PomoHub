@@ -7,6 +7,7 @@ export interface Habit {
   title: string;
   frequency: 'daily' | 'weekly';
   color: string;
+  emoji?: string;
   created_at: string;
   completedToday?: boolean; // Derived state
   streak?: number; // Placeholder for future implementation

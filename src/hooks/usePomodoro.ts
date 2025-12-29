@@ -1,7 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getDB } from '@/lib/db';
 import { format } from 'date-fns';
-import { sendNotification, requestPermission, isPermissionGranted } from '@tauri-apps/plugin-notification';
+import { 
+  sendNotification, 
+  requestPermission, 
+  isPermissionGranted,
+  createChannel,
+  channels,
+  Importance,
+  Visibility
+} from '@tauri-apps/plugin-notification';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { isMobile } from '@/lib/utils';
@@ -80,16 +88,38 @@ export const usePomodoro = () => {
     }
   }, [mode, isActive, timeLeft]);
 
-  // Request notification permission on mount
+  // Request notification permission on mount and setup channel
   useEffect(() => {
-    const checkPermission = async () => {
+    const setupNotifications = async () => {
       let permission = await isPermissionGranted();
       if (!permission) {
         const request = await requestPermission();
         permission = request === 'granted';
       }
+
+      if (permission && isMobile()) {
+        try {
+          // Check if channel exists or create it
+          const currentChannels = await channels();
+          const channelExists = currentChannels.some(c => c.id === 'pomodoro_timer_silent');
+          
+          if (!channelExists) {
+            await createChannel({
+              id: 'pomodoro_timer_silent',
+              name: 'Timer Updates',
+              description: 'Silent notifications for timer progress',
+              importance: Importance.Low,
+              visibility: Visibility.Public,
+              vibration: false,
+              sound: undefined 
+            });
+          }
+        } catch (error) {
+          console.error("Failed to setup notification channel:", error);
+        }
+      }
     };
-    checkPermission();
+    setupNotifications();
   }, []);
 
   // Use refs to access latest state inside interval/timeouts without dependency issues
@@ -255,16 +285,17 @@ export const usePomodoro = () => {
           const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
           getCurrentWindow().setTitle(`${timeStr} - ${currentState.mode === 'work' ? 'Focus' : 'Break'} | PomoHub`);
 
-          // Update Mobile Notification (every 1 second)
-          // Only on mobile to avoid notification spam on desktop
+          // Update Mobile Notification (Silent & Persistent if possible)
+          // To avoid spamming, we only update every 1 second, and use the same ID
           if (isMobile() && now - lastNotificationUpdateRef.current > 1000) {
              lastNotificationUpdateRef.current = now;
+             // On Android/Mobile, sending a new notification with the same ID usually updates it.
+             // We use a custom channel with Importance.Low for silent updates
              sendNotification({
                 id: TIMER_NOTIFICATION_ID,
                 title: currentState.mode === 'work' ? 'Focusing... 🍅' : 'On Break ☕',
                 body: `${timeStr} remaining`,
-                sound: undefined, // Silent update
-                silent: true // Try to make it silent if supported
+                channelId: 'pomodoro_timer_silent',
              });
           }
 

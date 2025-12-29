@@ -24,6 +24,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Pomodoro Habit Development files
+# PomoHub Habit Development files
 /memory-bank
 AGENTS.md
+
+# PomoHub Backend files
+/backend
+api.ts

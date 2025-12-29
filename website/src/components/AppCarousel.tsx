@@ -6,13 +6,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const images = [
-  { src: "./main page.jpg", alt: "Main Dashboard - Overview of your day" },
-  { src: "./pomodoro page.jpg", alt: "Pomodoro Timer - Focus with customizable intervals" },
-  { src: "./habits page.jpg", alt: "Habit Tracker - Build streaks and consistency" },
-  { src: "./calender page.jpg", alt: "Calendar - Visualize your productivity history" },
-  { src: "./todo page.jpg", alt: "Todo List - Manage your tasks efficiently" },
-  { src: "./goals page.jpg", alt: "Goals - Track long-term progress" },
-  { src: "./settings page.jpg", alt: "Settings - Customize theme and background" },
+  { src: "/main page.jpg", alt: "Main Dashboard - Overview of your day" },
+  { src: "/pomodoro page.jpg", alt: "Pomodoro Timer - Focus with customizable intervals" },
+  { src: "/habits page.jpg", alt: "Habit Tracker - Build streaks and consistency" },
+  { src: "/calender page.jpg", alt: "Calendar - Visualize your productivity history" },
+  { src: "/todo page.jpg", alt: "Todo List - Manage your tasks efficiently" },
+  { src: "/goals page.jpg", alt: "Goals - Track long-term progress" },
+  { src: "/settings page.jpg", alt: "Settings - Customize theme and background" },
 ];
 
 export function AppCarousel() {
@@ -30,7 +30,7 @@ export function AppCarousel() {
   const prev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto aspect-[16/10] bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-zinc-900/10 group">
+    <div className="relative w-full max-w-5xl mx-auto aspect-16/10 bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-zinc-900/10 group">
       <div className="absolute inset-0 flex items-center justify-center bg-zinc-950/50">
         <AnimatePresence mode="wait">
           <motion.div
@@ -56,7 +56,7 @@ export function AppCarousel() {
       </div>
 
       {/* Caption Overlay */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent text-white text-center">
+      <div className="absolute bottom-0 left-0 right-0 p-6 bg-linear-to-t from-black/80 to-transparent text-white text-center">
         <p className="text-lg font-medium">{images[currentIndex].alt}</p>
       </div>
 
