@@ -1,3 +1,12 @@
+<div align="center">
+
+<img align="center" alt="GitHub License" src="https://img.shields.io/github/license/PomoHub/PomoHub">
+<img align="center" alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/PomoHub/PomoHub">
+<img align="center" alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/PomoHub/PomoHub/total">
+<img align="center" alt="GitHub Sponsors" src="https://img.shields.io/github/sponsors/PomoHub">
+
+</div>
+
 # PomoHub 🍅
 
 A modern, all-in-one productivity application built with **Tauri**, **React**, and **TypeScript**. Combine the power of the Pomodoro technique with habit tracking, goal setting, and task management in a beautiful, customizable interface.
