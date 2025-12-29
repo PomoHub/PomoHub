@@ -1,5 +1,7 @@
-import { X, Trash2, LogOut, AlertTriangle } from "lucide-react";
+import { X, Trash2, LogOut, AlertTriangle, Timer, Save } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { useConfirm } from "@/components/providers/ConfirmProvider";
 
 interface SpaceSettingsModalProps {
   isOpen: boolean;
@@ -18,6 +20,8 @@ export function SpaceSettingsModal({
   onDeleteSpace,
   onLeaveSpace
 }: SpaceSettingsModalProps) {
+  const { confirm } = useConfirm();
+  // ... existing state if any ...
   return (
     <AnimatePresence>
       {isOpen && (
@@ -131,8 +135,14 @@ export function SpaceSettingsModal({
                   
                   {isOwner ? (
                     <button
-                      onClick={() => {
-                        if (confirm("Are you sure you want to delete this space? This action cannot be undone.")) {
+                      onClick={async () => {
+                        const isConfirmed = await confirm({
+                          title: "Delete Space",
+                          message: "Are you sure you want to delete this space? This action cannot be undone.",
+                          confirmText: "Delete",
+                          variant: "danger"
+                        });
+                        if (isConfirmed) {
                           onDeleteSpace();
                         }
                       }}
@@ -143,8 +153,14 @@ export function SpaceSettingsModal({
                     </button>
                   ) : (
                     <button
-                      onClick={() => {
-                        if (confirm("Are you sure you want to leave this space?")) {
+                      onClick={async () => {
+                        const isConfirmed = await confirm({
+                          title: "Leave Space",
+                          message: "Are you sure you want to leave this space?",
+                          confirmText: "Leave",
+                          variant: "danger"
+                        });
+                        if (isConfirmed) {
                           onLeaveSpace();
                         }
                       }}

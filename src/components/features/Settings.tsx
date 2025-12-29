@@ -3,6 +3,7 @@ import { Moon, Sun, Monitor, Image as ImageIcon, Trash2, Bell, User, Cloud, LogO
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth";
 import { useAppStore } from "@/store";
+import { useConfirm } from "@/components/providers/ConfirmProvider";
 
 export function Settings() {
   const { 
@@ -19,6 +20,7 @@ export function Settings() {
 
   const { user, logout } = useAuthStore();
   const { setCurrentView } = useAppStore();
+  const { confirm } = useConfirm();
 
   const sounds = [
     { id: 'default', label: 'Default Beep' },
@@ -28,7 +30,14 @@ export function Settings() {
   ];
 
   const handleReset = async () => {
-    if (confirm("Are you sure you want to delete all data? This cannot be undone.")) {
+    const isConfirmed = await confirm({
+        title: "Reset Application Data",
+        message: "Are you sure you want to delete all data? This cannot be undone.",
+        confirmText: "Reset Everything",
+        variant: "danger"
+    });
+
+    if (isConfirmed) {
       await resetDatabase();
       alert("Database has been reset. Please restart the application.");
     }
@@ -155,7 +164,17 @@ export function Settings() {
                 </button>
                 {backgroundImage && (
                   <button
-                    onClick={clearBackgroundImage}
+                    onClick={async () => {
+                      const isConfirmed = await confirm({
+                        title: "Remove Background",
+                        message: "Are you sure you want to remove the custom background?",
+                        confirmText: "Remove",
+                        variant: "danger"
+                      });
+                      if (isConfirmed) {
+                        clearBackgroundImage();
+                      }
+                    }}
                     className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                     title="Remove background"
                   >

@@ -30,7 +30,7 @@ export function AppCarousel() {
   const prev = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="relative w-full max-w-5xl mx-auto aspect-16/10 bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-zinc-900/10 group">
+    <div className="relative w-full max-w-5xl mx-auto aspect-video bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl ring-1 ring-zinc-900/10 group">
       <div className="absolute inset-0 flex items-center justify-center bg-zinc-950/50">
         <AnimatePresence mode="wait">
           <motion.div

@@ -21,6 +21,8 @@ interface Space {
   members: any[];
 }
 
+import { useConfirm } from "@/components/providers/ConfirmProvider";
+
 export function SpacesView() {
   const [spaces, setSpaces] = useState<Space[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,6 +30,7 @@ export function SpacesView() {
   const [selectedSpaceId, setSelectedSpaceId] = useState<string | null>(null);
   const [newSpaceName, setNewSpaceName] = useState("");
   const { user } = useAuthStore();
+  const { confirm } = useConfirm();
 
   const fetchSpaces = async () => {
     try {
@@ -58,7 +61,16 @@ export function SpacesView() {
 
   const handleDeleteSpace = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation(); // Prevent opening space
-    if (!confirm("Are you sure you want to delete this space?")) return;
+    
+    const isConfirmed = await confirm({
+      title: "Delete Space",
+      message: "Are you sure you want to delete this space? This action cannot be undone.",
+      confirmText: "Delete",
+      variant: "danger"
+    });
+
+    if (!isConfirmed) return;
+
     try {
       await api.delete(`/spaces/${id}`);
       fetchSpaces();

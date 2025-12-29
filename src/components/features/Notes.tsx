@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNotes, Note } from '@/hooks/useNotes';
 import { useTodos } from '@/hooks/useTodos';
+import { useConfirm } from "@/components/providers/ConfirmProvider";
 import { Plus, Trash2, Save, FileText, Paperclip, PenTool, X, Eraser, MousePointer, Eye } from 'lucide-react';
 import { ReactSketchCanvas, ReactSketchCanvasRef } from 'react-sketch-canvas';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,7 @@ import { convertFileSrc } from '@tauri-apps/api/core';
 export function Notes() {
   const { notes, loading, addNote, updateNote, deleteNote } = useNotes();
   const { addTodo } = useTodos();
+  const { confirm } = useConfirm();
   
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -125,7 +127,15 @@ export function Notes() {
 
   const handleDelete = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
-    if (confirm('Are you sure you want to delete this note?')) {
+    
+    const isConfirmed = await confirm({
+        title: "Delete Note",
+        message: "Are you sure you want to delete this note?",
+        confirmText: "Delete",
+        variant: "danger"
+    });
+
+    if (isConfirmed) {
       await deleteNote(id);
       if (selectedNote?.id === id) {
         resetForm();

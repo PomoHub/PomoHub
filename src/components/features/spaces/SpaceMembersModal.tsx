@@ -1,5 +1,6 @@
 import { X, UserMinus, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useConfirm } from "@/components/providers/ConfirmProvider";
 
 interface SpaceMember {
   user_id: string;
@@ -27,6 +28,7 @@ export function SpaceMembersModal({
   isOwner,
   onRemoveMember
 }: SpaceMembersModalProps) {
+  const { confirm } = useConfirm();
   return (
     <AnimatePresence>
       {isOpen && (
@@ -88,7 +90,17 @@ export function SpaceMembersModal({
                     {/* Actions */}
                     {isOwner && member.user_id !== currentUserId && (
                       <button
-                        onClick={() => onRemoveMember(member.user_id)}
+                        onClick={async () => {
+                            const isConfirmed = await confirm({
+                                title: "Remove Member",
+                                message: `Are you sure you want to remove ${member.user.username} from the space?`,
+                                confirmText: "Remove",
+                                variant: "danger"
+                            });
+                            if (isConfirmed) {
+                                onRemoveMember(member.user_id);
+                            }
+                        }}
                         className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
                         title="Remove Member"
                       >

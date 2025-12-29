@@ -2,6 +2,7 @@ import { useHabits } from "@/hooks/useHabits";
 import { Plus, Trash2, Check } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useConfirm } from "@/components/providers/ConfirmProvider";
 
 const COLORS = [
   '#ef4444', // Red
@@ -16,6 +17,7 @@ const COLORS = [
 
 export function HabitTracker() {
   const { habits, loading, addHabit, deleteHabit, toggleHabit } = useHabits();
+  const { confirm } = useConfirm();
   const [isAdding, setIsAdding] = useState(false);
   const [newHabitTitle, setNewHabitTitle] = useState("");
   const [selectedColor, setSelectedColor] = useState(COLORS[5]);
@@ -138,7 +140,17 @@ export function HabitTracker() {
             </div>
 
             <button
-              onClick={() => deleteHabit(habit.id)}
+              onClick={async () => {
+                const isConfirmed = await confirm({
+                    title: "Delete Habit",
+                    message: "Are you sure you want to delete this habit?",
+                    confirmText: "Delete",
+                    variant: "danger"
+                });
+                if (isConfirmed) {
+                    deleteHabit(habit.id);
+                }
+              }}
               className="opacity-0 group-hover:opacity-100 p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
             >
               <Trash2 size={18} />

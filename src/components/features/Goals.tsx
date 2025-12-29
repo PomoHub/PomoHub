@@ -2,9 +2,11 @@ import { useGoals } from "@/hooks/useGoals";
 import { Plus, Trash2, Target, Calendar as CalendarIcon, Minus } from "lucide-react";
 import { useState } from "react";
 import { format } from "date-fns";
+import { useConfirm } from "@/components/providers/ConfirmProvider";
 
 export function Goals() {
   const { goals, loading, addGoal, updateProgress, deleteGoal } = useGoals();
+  const { confirm } = useConfirm();
   const [isAdding, setIsAdding] = useState(false);
   
   // Form State
@@ -132,7 +134,17 @@ export function Goals() {
                 </div>
                 
                 <button
-                  onClick={() => deleteGoal(goal.id)}
+                  onClick={async () => {
+                    const isConfirmed = await confirm({
+                        title: "Delete Goal",
+                        message: "Are you sure you want to delete this goal?",
+                        confirmText: "Delete",
+                        variant: "danger"
+                    });
+                    if (isConfirmed) {
+                        deleteGoal(goal.id);
+                    }
+                  }}
                   className="opacity-0 group-hover:opacity-100 p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
                 >
                   <Trash2 size={18} />

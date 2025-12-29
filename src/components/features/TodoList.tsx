@@ -3,9 +3,11 @@ import { Plus, Trash2, Calendar as CalendarIcon, Check, Bell } from "lucide-reac
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useConfirm } from "@/components/providers/ConfirmProvider";
 
 export function TodoList() {
   const { todos, loading, addTodo, toggleTodo, deleteTodo } = useTodos();
+  const { confirm } = useConfirm();
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [dueDate, setDueDate] = useState<string>(""); // YYYY-MM-DD
   const [reminderTime, setReminderTime] = useState<string>(""); // YYYY-MM-DDTHH:mm
@@ -154,7 +156,17 @@ export function TodoList() {
             </div>
 
             <button
-              onClick={() => deleteTodo(todo.id)}
+              onClick={async () => {
+                const isConfirmed = await confirm({
+                    title: "Delete Task",
+                    message: "Are you sure you want to delete this task?",
+                    confirmText: "Delete",
+                    variant: "danger"
+                });
+                if (isConfirmed) {
+                    deleteTodo(todo.id);
+                }
+              }}
               className="opacity-0 group-hover:opacity-100 p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all"
             >
               <Trash2 size={16} />

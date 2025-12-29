@@ -5,8 +5,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: '/PomoHub', // Assuming repo name is PomoHub
-  reactCompiler: true,
+  // basePath: '/PomoHub', // Disabled for root deployment
 };
 
 export default nextConfig;
