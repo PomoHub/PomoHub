@@ -188,6 +188,18 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
     }
   };
 
+  const handleAddMember = async (userId: string) => {
+    try {
+      await api.post(`/spaces/${spaceId}/members`, { user_id: userId });
+      // Refresh space data
+      const data = await api.get(`/spaces/${spaceId}`);
+      setSpace(data);
+    } catch (error) {
+      console.error("Failed to add member:", error);
+      alert("Failed to add member");
+    }
+  };
+
   const handleLeaveSpace = async () => {
     if (!user) return;
     try {
@@ -433,6 +445,7 @@ export function SpaceDetailView({ spaceId, onBack }: SpaceDetailViewProps) {
             currentUserId={user?.id || ""}
             isOwner={space?.owner_id === user?.id}
             onRemoveMember={handleRemoveMember}
+            onAddMember={handleAddMember}
         />
 
         <SpaceSettingsModal 
